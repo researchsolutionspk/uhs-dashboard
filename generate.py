@@ -282,44 +282,8 @@ gpql = [pql_level(girls_pql_dists, l) for l in range(5)]
 
 js = f"""// ══════════════════════════════════════════
 // AUTO-GENERATED — {last_updated}
-// Run generate.py to refresh from CSV data
 // Boys: {n_boys} records  |  Girls: {n_girls} records  |  Total: {n_total}
 // ══════════════════════════════════════════
-
-// ── Panel Navigation
-function showPanel(id, btn) {{
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + id).classList.add('active');
-  btn.classList.add('active');
-  window.scrollTo({{ top: 0, behavior: 'smooth' }});
-}}
-
-// ── Register plugins
-Chart.register(ChartDataLabels);
-
-// ── Colour palette
-const RED    = '#E8192C';
-const NAVY   = '#2D3450';
-const TEAL   = '#0891B2';
-const AMBER  = '#F59E0B';
-const PURPLE = '#8B5CF6';
-const TEAL_L = 'rgba(8,145,178,.15)';
-const RED_L  = 'rgba(232,25,44,.12)';
-const NAVY_L = 'rgba(45,52,80,.12)';
-const AMB_L  = 'rgba(245,158,11,.15)';
-const PUR_L  = 'rgba(139,92,246,.12)';
-
-const defaults = {{
-  plugins: {{
-    legend: {{ labels: {{ font: {{ family: 'Inter', size: 12 }}, color: '#334155' }} }},
-    datalabels: {{ display: false }}
-  }},
-  scales: {{
-    x: {{ ticks: {{ font: {{ family: 'Inter', size: 11 }}, color: '#475569' }}, grid: {{ display: false }} }},
-    y: {{ ticks: {{ font: {{ family: 'Inter', size: 11 }}, color: '#475569' }}, grid: {{ color: '#f1f5f9' }} }}
-  }}
-}};
 
 // ══════════════════════════════════════════
 // OVERVIEW CHARTS
