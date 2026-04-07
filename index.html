@@ -306,9 +306,7 @@
       background: var(--rs-navy);
       display: flex; align-items: center; justify-content: center;
       flex-direction: column;
-      transition: opacity .4s ease, visibility .4s ease;
     }
-    #auth-gate.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
     .auth-card {
       background: white; border-radius: 20px;
@@ -367,14 +365,9 @@
     }
     .auth-footer strong { color: rgba(255,255,255,.6); }
 
-    /* Hide page content until authenticated */
-    body.locked .header,
-    body.locked .sample-banner,
-    body.locked .main,
-    body.locked .page-footer { visibility: hidden; }
   </style>
 </head>
-<body class="locked">
+<body>
 
 <!-- ════════════════════ PASSWORD GATE -->
 <div id="auth-gate">
@@ -1066,49 +1059,37 @@
   <strong>Empowering Girls — Endline Survey Dashboard</strong> &nbsp;·&nbsp;
   Research Solutions (M&amp;A Research Solutions LLC) &nbsp;·&nbsp;
   <strong>www.rs.org.pk</strong> &nbsp;·&nbsp;
-  Data updated 07 April 2026, 16:33 &nbsp;·&nbsp; 45 records (25 boys · 20 girls) &nbsp;·&nbsp; Pakistan Urban Schools
+  Data updated 07 April 2026, 16:37 &nbsp;·&nbsp; 45 records (25 boys · 20 girls) &nbsp;·&nbsp; Pakistan Urban Schools
 </div>
 
 <script>
 // ══════════════════════════════════════════
 // PASSWORD GATE
 // ══════════════════════════════════════════
-(function () {
-  // ── Change this password to whatever you like ──
-  const PASSWORD = 'UHS@RS2026';
+const PASSWORD    = 'UHS@RS2026';
+const SESSION_KEY = 'uhs_auth';
 
-  const SESSION_KEY = 'uhs_auth';
-  const gate  = document.getElementById('auth-gate');
-  const body  = document.body;
+function unlock() {
+  document.getElementById('auth-gate').style.display = 'none';
+  sessionStorage.setItem(SESSION_KEY, '1');
+}
 
-  function unlock() {
-    gate.classList.add('hidden');
-    body.classList.remove('locked');
-    sessionStorage.setItem(SESSION_KEY, '1');
-  }
-
-  // Already authenticated this session?
-  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+function checkAuth() {
+  var inp = document.getElementById('auth-pw');
+  var err = document.getElementById('auth-error');
+  if (inp.value === PASSWORD) {
+    inp.classList.remove('error');
+    err.textContent = '';
     unlock();
+  } else {
+    inp.classList.add('error');
+    err.textContent = 'Incorrect password. Please try again.';
+    inp.value = '';
+    inp.focus();
   }
+}
 
-  window.checkAuth = function () {
-    const pw  = document.getElementById('auth-pw').value;
-    const err = document.getElementById('auth-error');
-    const inp = document.getElementById('auth-pw');
-
-    if (pw === PASSWORD) {
-      inp.classList.remove('error');
-      err.textContent = '';
-      unlock();
-    } else {
-      inp.classList.add('error');
-      err.textContent = 'Incorrect password. Please try again.';
-      inp.value = '';
-      inp.focus();
-    }
-  };
-})();
+if (sessionStorage.getItem(SESSION_KEY) === '1') { unlock(); }
 
 // ── Panel Navigation
 function showPanel(id, btn) {
@@ -1150,7 +1131,7 @@ const defaults = {
 
 
 // ══════════════════════════════════════════
-// AUTO-GENERATED — 07 April 2026, 16:33
+// AUTO-GENERATED — 07 April 2026, 16:37
 // Boys: 25 records  |  Girls: 20 records  |  Total: 45
 // ══════════════════════════════════════════
 
