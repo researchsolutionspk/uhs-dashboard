@@ -390,6 +390,7 @@
   </div>
 </div>
 
+<div id="site-content" style="display:none">
 <!-- ════════════════════ HEADER -->
 <div class="header">
   <div class="header-inner">
@@ -1059,37 +1060,27 @@
   <strong>Empowering Girls — Endline Survey Dashboard</strong> &nbsp;·&nbsp;
   Research Solutions (M&amp;A Research Solutions LLC) &nbsp;·&nbsp;
   <strong>www.rs.org.pk</strong> &nbsp;·&nbsp;
-  Data updated 07 April 2026, 16:37 &nbsp;·&nbsp; 45 records (25 boys · 20 girls) &nbsp;·&nbsp; Pakistan Urban Schools
+  Data updated 07 April 2026, 16:42 &nbsp;·&nbsp; 45 records (25 boys · 20 girls) &nbsp;·&nbsp; Pakistan Urban Schools
 </div>
+</div><!-- /site-content -->
 
 <script>
 // ══════════════════════════════════════════
 // PASSWORD GATE
 // ══════════════════════════════════════════
-const PASSWORD    = 'UHS@RS2026';
-const SESSION_KEY = 'uhs_auth';
-
-function unlock() {
-  document.getElementById('auth-gate').style.display = 'none';
-  sessionStorage.setItem(SESSION_KEY, '1');
-}
-
 function checkAuth() {
-  var inp = document.getElementById('auth-pw');
+  var pw  = document.getElementById('auth-pw').value;
   var err = document.getElementById('auth-error');
-  if (inp.value === PASSWORD) {
-    inp.classList.remove('error');
+  if (pw === 'UHS@RS2026') {
+    document.getElementById('auth-gate').style.display    = 'none';
+    document.getElementById('site-content').style.display = 'block';
     err.textContent = '';
-    unlock();
   } else {
-    inp.classList.add('error');
     err.textContent = 'Incorrect password. Please try again.';
-    inp.value = '';
-    inp.focus();
+    document.getElementById('auth-pw').value = '';
+    document.getElementById('auth-pw').focus();
   }
 }
-
-if (sessionStorage.getItem(SESSION_KEY) === '1') { unlock(); }
 
 // ── Panel Navigation
 function showPanel(id, btn) {
@@ -1131,7 +1122,7 @@ const defaults = {
 
 
 // ══════════════════════════════════════════
-// AUTO-GENERATED — 07 April 2026, 16:37
+// AUTO-GENERATED — 07 April 2026, 16:42
 // Boys: 25 records  |  Girls: 20 records  |  Total: 45
 // ══════════════════════════════════════════
 
