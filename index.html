@@ -297,9 +297,105 @@
       font-size: 10px; font-weight: 800; letter-spacing: .8px;
       text-transform: uppercase; padding: 3px 10px; border-radius: 99px;
     }
+
+    /* ══════════════════════════════════════════════
+       PASSWORD GATE
+    ══════════════════════════════════════════════ */
+    #auth-gate {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--rs-navy);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+      transition: opacity .4s ease, visibility .4s ease;
+    }
+    #auth-gate.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+    .auth-card {
+      background: white; border-radius: 20px;
+      padding: 48px 44px; width: 100%; max-width: 420px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.35);
+      text-align: center;
+    }
+    .auth-logo {
+      width: 52px; height: 52px; background: var(--rs-red);
+      border-radius: 14px; display: flex; align-items: center;
+      justify-content: center; font-size: 24px;
+      margin: 0 auto 20px;
+    }
+    .auth-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-weight: 700;
+      color: var(--rs-navy); margin-bottom: 6px;
+    }
+    .auth-subtitle {
+      font-size: 13px; color: var(--n-600);
+      margin-bottom: 28px; line-height: 1.5;
+    }
+    .auth-label {
+      display: block; text-align: left;
+      font-size: 12px; font-weight: 600;
+      color: var(--rs-navy-soft); letter-spacing: .5px;
+      text-transform: uppercase; margin-bottom: 8px;
+    }
+    .auth-input {
+      width: 100%; padding: 13px 16px;
+      border: 2px solid var(--n-200); border-radius: 10px;
+      font-family: 'Inter', sans-serif; font-size: 15px;
+      color: var(--rs-navy); outline: none;
+      transition: border-color .2s;
+      letter-spacing: .12em;
+    }
+    .auth-input:focus { border-color: var(--rs-red); }
+    .auth-input.error { border-color: var(--rs-red); background: var(--rs-red-50); }
+    .auth-btn {
+      width: 100%; margin-top: 18px; padding: 14px;
+      background: var(--rs-red); color: white;
+      border: none; border-radius: 10px; cursor: pointer;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      letter-spacing: .2px; transition: background .2s, transform .1s;
+    }
+    .auth-btn:hover { background: var(--rs-red-dark); }
+    .auth-btn:active { transform: scale(.98); }
+    .auth-error {
+      margin-top: 12px; font-size: 13px;
+      color: var(--rs-red-dark); font-weight: 600;
+      min-height: 20px;
+    }
+    .auth-footer {
+      margin-top: 24px; font-size: 11.5px;
+      color: rgba(255,255,255,.35); letter-spacing: .3px;
+    }
+    .auth-footer strong { color: rgba(255,255,255,.6); }
+
+    /* Hide page content until authenticated */
+    body.locked .header,
+    body.locked .sample-banner,
+    body.locked .main,
+    body.locked .page-footer { visibility: hidden; }
   </style>
 </head>
-<body>
+<body class="locked">
+
+<!-- ════════════════════ PASSWORD GATE -->
+<div id="auth-gate">
+  <div class="auth-card">
+    <div class="auth-logo">🔍</div>
+    <div class="auth-title">Empowering Girls Dashboard</div>
+    <div class="auth-subtitle">
+      This dashboard contains confidential research data.<br>
+      Please enter the access password to continue.
+    </div>
+    <label class="auth-label" for="auth-pw">Access Password</label>
+    <input id="auth-pw" class="auth-input" type="password"
+           placeholder="Enter password"
+           onkeydown="if(event.key==='Enter') checkAuth()" autocomplete="current-password" />
+    <button class="auth-btn" onclick="checkAuth()">Access Dashboard →</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+  <div class="auth-footer">
+    <strong>Research Solutions</strong> &nbsp;·&nbsp; Confidential Research Data &nbsp;·&nbsp; www.rs.org.pk
+  </div>
+</div>
 
 <!-- ════════════════════ HEADER -->
 <div class="header">
@@ -974,6 +1070,46 @@
 </div>
 
 <script>
+// ══════════════════════════════════════════
+// PASSWORD GATE
+// ══════════════════════════════════════════
+(function () {
+  // ── Change this password to whatever you like ──
+  const PASSWORD = 'UHS@RS2026';
+
+  const SESSION_KEY = 'uhs_auth';
+  const gate  = document.getElementById('auth-gate');
+  const body  = document.body;
+
+  function unlock() {
+    gate.classList.add('hidden');
+    body.classList.remove('locked');
+    sessionStorage.setItem(SESSION_KEY, '1');
+  }
+
+  // Already authenticated this session?
+  if (sessionStorage.getItem(SESSION_KEY) === '1') {
+    unlock();
+  }
+
+  window.checkAuth = function () {
+    const pw  = document.getElementById('auth-pw').value;
+    const err = document.getElementById('auth-error');
+    const inp = document.getElementById('auth-pw');
+
+    if (pw === PASSWORD) {
+      inp.classList.remove('error');
+      err.textContent = '';
+      unlock();
+    } else {
+      inp.classList.add('error');
+      err.textContent = 'Incorrect password. Please try again.';
+      inp.value = '';
+      inp.focus();
+    }
+  };
+})();
+
 // ── Panel Navigation
 function showPanel(id, btn) {
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
