@@ -1,0 +1,16 @@
+# Survey data — never publish to public repo
+*.csv
+*.dta
+*.xlsx
+*.zip
+*.do
+
+# Data subdirectories with raw respondent data
+Data/
+Instrument/
+Sample/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.claude/

@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Empowering Girls — Endline Survey Dashboard — Research Solutions</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rs-red:        #E8192C;
+      --rs-red-dark:   #B5101E;
+      --rs-red-mid:    #C41020;
+      --rs-red-muted:  #F47885;
+      --rs-red-light:  #FDECEA;
+      --rs-red-50:     #FFF5F5;
+
+      --rs-navy:       #2D3450;
+      --rs-navy-dark:  #1E2438;
+      --rs-navy-mid:   #3D4566;
+      --rs-navy-soft:  #6B7494;
+      --rs-navy-light: #E8EAF2;
+      --rs-navy-50:    #F2F3F8;
+
+      --rs-cream:      #FAF8F4;
+      --white:         #FFFFFF;
+
+      --teal-700:  #0E7490;
+      --teal-500:  #0891B2;
+      --teal-300:  #67E8F9;
+      --teal-100:  #CFFAFE;
+      --teal-50:   #ECFEFF;
+
+      --amber-600: #D97706;
+      --amber-500: #F59E0B;
+      --amber-400: #FBBF24;
+      --amber-100: #FEF3C7;
+      --amber-50:  #FFFBEB;
+
+      --purple-700: #6D28D9;
+      --purple-500: #8B5CF6;
+      --purple-100: #EDE9FE;
+      --purple-50:  #F5F3FF;
+
+      --n-900: #0f172a;
+      --n-800: #1e293b;
+      --n-700: #334155;
+      --n-600: #475569;
+      --n-400: #94a3b8;
+      --n-200: #e2e8f0;
+      --n-100: #f1f5f9;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--rs-cream);
+      color: var(--rs-navy);
+      min-height: 100vh;
+    }
+
+    .header {
+      background: var(--rs-navy);
+      color: white;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 24px rgba(30,36,56,.40);
+      border-bottom: 3px solid var(--rs-red);
+    }
+    .header-inner {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      flex-direction: column;
+    }
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0 12px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .header-logo-wrap img { height: 46px; display: block; }
+    .header-study { text-align: center; flex: 1; padding: 0 24px; }
+    .header-study-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; font-weight: 700; color: #fff; letter-spacing: -.2px;
+    }
+    .header-study-sub {
+      font-size: 11px; color: rgba(255,255,255,.55);
+      letter-spacing: .6px; text-transform: uppercase; margin-top: 3px;
+    }
+    .header-meta {
+      text-align: right; font-size: 12px;
+      color: rgba(255,255,255,.55); line-height: 1.7;
+    }
+    .header-meta strong { color: rgba(255,255,255,.9); font-size: 13px; }
+    .header-pill {
+      display: inline-block; background: var(--rs-red); color: #fff;
+      font-size: 10px; font-weight: 700; letter-spacing: .6px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 99px; margin-top: 4px;
+    }
+
+    .nav-tabs {
+      display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none;
+    }
+    .nav-tabs::-webkit-scrollbar { display: none; }
+    .nav-tab {
+      padding: 10px 18px; font-size: 12.5px; font-weight: 500;
+      color: rgba(255,255,255,.55); cursor: pointer;
+      border-radius: 8px 8px 0 0; border: none; background: transparent;
+      white-space: nowrap; transition: all .2s; letter-spacing: .2px;
+    }
+    .nav-tab:hover { color: rgba(255,255,255,.9); background: rgba(255,255,255,.06); }
+    .nav-tab.active {
+      color: var(--rs-navy); background: var(--rs-cream);
+      font-weight: 700; border-top: 2px solid var(--rs-red);
+    }
+
+    .main { max-width: 1440px; margin: 0 auto; padding: 28px 32px 60px; }
+    .panel { display: none; }
+    .panel.active { display: block; animation: fadeIn .3s ease; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+    .section-header {
+      margin-bottom: 28px; padding-bottom: 16px;
+      border-bottom: 2px solid var(--rs-navy-light);
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .section-header-accent {
+      width: 4px; min-height: 52px; border-radius: 99px;
+      background: var(--rs-red); flex-shrink: 0; margin-top: 4px;
+    }
+    .section-header h2 {
+      font-size: 26px; font-weight: 700; color: var(--rs-navy);
+      font-family: 'Playfair Display', serif;
+    }
+    .section-header p {
+      font-size: 14px; color: var(--n-600); margin-top: 6px;
+      line-height: 1.65; max-width: 780px;
+    }
+
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px; }
+    .kpi-card {
+      background: white; border-radius: 14px; padding: 22px 20px;
+      box-shadow: 0 1px 4px rgba(45,52,80,.07), 0 4px 16px rgba(45,52,80,.05);
+      border-left: 4px solid var(--rs-red);
+      transition: transform .2s, box-shadow .2s; position: relative; overflow: hidden;
+    }
+    .kpi-card::after {
+      content: ''; position: absolute; top: 0; right: 0;
+      width: 80px; height: 80px; background: var(--rs-red-50);
+      border-radius: 0 14px 0 80px;
+    }
+    .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(45,52,80,.12); }
+    .kpi-card.navy  { border-left-color: var(--rs-navy); }
+    .kpi-card.navy::after { background: var(--rs-navy-50); }
+    .kpi-card.amber { border-left-color: var(--amber-500); }
+    .kpi-card.amber::after { background: var(--amber-50); }
+    .kpi-card.teal  { border-left-color: var(--teal-500); }
+    .kpi-card.teal::after  { background: var(--teal-50); }
+    .kpi-card.purple { border-left-color: var(--purple-500); }
+    .kpi-card.purple::after { background: var(--purple-50); }
+    .kpi-icon { font-size: 26px; margin-bottom: 10px; position: relative; z-index: 1; }
+    .kpi-value { font-size: 32px; font-weight: 800; color: var(--rs-navy); line-height: 1; position: relative; z-index: 1; }
+    .kpi-label { font-size: 12px; color: var(--n-600); margin-top: 6px; text-transform: uppercase; letter-spacing: .5px; font-weight: 500; position: relative; z-index: 1; }
+    .kpi-delta { font-size: 11px; font-weight: 600; margin-top: 8px; padding: 3px 8px; border-radius: 99px; display: inline-block; position: relative; z-index: 1; }
+    .kpi-delta.up      { background: var(--teal-100);    color: var(--teal-700); }
+    .kpi-delta.down    { background: var(--rs-red-light); color: var(--rs-red-dark); }
+    .kpi-delta.neutral { background: var(--amber-100);   color: var(--amber-600); }
+    .kpi-delta.navy    { background: var(--rs-navy-light); color: var(--rs-navy); }
+
+    .chart-grid { display: grid; gap: 20px; margin-bottom: 24px; }
+    .chart-grid.cols-2  { grid-template-columns: repeat(2,1fr); }
+    .chart-grid.cols-3  { grid-template-columns: repeat(3,1fr); }
+    .chart-card {
+      background: white; border-radius: 14px; padding: 24px;
+      box-shadow: 0 1px 4px rgba(45,52,80,.07), 0 4px 16px rgba(45,52,80,.05);
+    }
+    .chart-card.full { grid-column: 1/-1; }
+    .chart-card h3 {
+      font-size: 14.5px; font-weight: 700; color: var(--rs-navy);
+      margin-bottom: 4px; padding-left: 10px; border-left: 3px solid var(--rs-red);
+    }
+    .chart-desc { font-size: 12px; color: var(--n-600); margin: 6px 0 18px 13px; line-height: 1.5; }
+    .chart-wrap canvas { max-height: 280px; }
+    .chart-wrap.tall canvas { max-height: 360px; }
+
+    .insight-box {
+      border-radius: 12px; padding: 16px 20px; margin-bottom: 20px;
+      border-left: 4px solid; font-size: 13.5px; line-height: 1.65;
+    }
+    .insight-box.primary { background: var(--rs-red-light);  border-color: var(--rs-red);   color: #6B0A12; }
+    .insight-box.navy    { background: var(--rs-navy-light); border-color: var(--rs-navy);  color: var(--rs-navy-dark); }
+    .insight-box.amber   { background: var(--amber-100);     border-color: var(--amber-500); color: #78350f; }
+    .insight-box.teal    { background: var(--teal-100);      border-color: var(--teal-500); color: var(--teal-700); }
+    .insight-box.purple  { background: var(--purple-100);    border-color: var(--purple-500); color: var(--purple-700); }
+    .insight-box strong  { font-weight: 700; }
+    .insight-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+
+    .callout-row { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 14px; margin-bottom: 24px; }
+    .callout {
+      border-radius: 12px; padding: 16px; display: flex; gap: 12px; align-items: flex-start;
+    }
+    .callout.primary { background: var(--rs-red-light); }
+    .callout.navy    { background: var(--rs-navy-light); }
+    .callout.amber   { background: var(--amber-100); }
+    .callout.teal    { background: var(--teal-100); }
+    .callout.purple  { background: var(--purple-100); }
+    .callout-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+    .callout-body h4 { font-size: 14px; font-weight: 700; color: var(--rs-navy); }
+    .callout-body p  { font-size: 12.5px; color: var(--n-600); margin-top: 4px; line-height: 1.5; }
+
+    .progress-list { display: flex; flex-direction: column; gap: 14px; }
+    .progress-header { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 13px; }
+    .progress-label { font-weight: 500; color: var(--rs-navy); }
+    .progress-pct   { font-weight: 700; color: var(--rs-navy); }
+    .progress-bar   { height: 8px; background: var(--n-100); border-radius: 99px; overflow: hidden; }
+    .progress-fill  { height: 100%; border-radius: 99px; transition: width 1s ease; }
+    .progress-fill.red    { background: var(--rs-red); }
+    .progress-fill.navy   { background: var(--rs-navy); }
+    .progress-fill.amber  { background: var(--amber-500); }
+    .progress-fill.teal   { background: var(--teal-500); }
+    .progress-fill.purple { background: var(--purple-500); }
+
+    .sensor-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: 14px; margin-bottom: 24px; }
+    .sensor-card {
+      background: white; border-radius: 14px; padding: 20px 16px;
+      text-align: center; box-shadow: 0 1px 4px rgba(45,52,80,.07), 0 4px 16px rgba(45,52,80,.05);
+      border-top: 3px solid var(--rs-navy);
+    }
+    .sensor-card.red    { border-top-color: var(--rs-red); }
+    .sensor-card.teal   { border-top-color: var(--teal-500); }
+    .sensor-card.amber  { border-top-color: var(--amber-500); }
+    .sensor-card.purple { border-top-color: var(--purple-500); }
+    .sensor-icon  { font-size: 28px; margin-bottom: 8px; }
+    .sensor-value { font-size: 28px; font-weight: 800; color: var(--rs-navy); line-height: 1; }
+    .sensor-unit  { font-size: 12px; font-weight: 500; color: var(--n-400); }
+    .sensor-label { font-size: 11px; color: var(--n-400); margin-top: 8px; text-transform: uppercase; letter-spacing: .4px; }
+    .sensor-status { display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+    .sensor-status.ok     { background: var(--teal-100);     color: var(--teal-700); }
+    .sensor-status.warn   { background: var(--amber-100);    color: var(--amber-600); }
+    .sensor-status.danger { background: var(--rs-red-light); color: var(--rs-red-dark); }
+
+    .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .data-table th {
+      background: var(--rs-navy-50); color: var(--rs-navy-soft);
+      font-weight: 600; text-align: left; padding: 10px 14px;
+      font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
+      border-bottom: 2px solid var(--rs-navy-light);
+    }
+    .data-table td { padding: 11px 14px; border-bottom: 1px solid var(--n-100); color: var(--n-700); }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table tr:hover td { background: var(--rs-navy-50); }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+    .badge-red    { background: var(--rs-red-light);  color: var(--rs-red-dark); }
+    .badge-navy   { background: var(--rs-navy-light); color: var(--rs-navy); }
+    .badge-amber  { background: var(--amber-100);     color: var(--amber-600); }
+    .badge-teal   { background: var(--teal-100);      color: var(--teal-700); }
+    .badge-purple { background: var(--purple-100);    color: var(--purple-700); }
+
+    .footnote {
+      font-size: 11px; color: var(--n-400); margin-top: 18px;
+      padding-top: 12px; border-top: 1px solid var(--n-200); line-height: 1.5;
+    }
+    .page-footer {
+      background: var(--rs-navy); color: rgba(255,255,255,.45); font-size: 11.5px;
+      text-align: center; padding: 18px 32px; letter-spacing: .3px;
+      border-top: 3px solid var(--rs-red); margin-top: 40px;
+    }
+    .page-footer strong { color: rgba(255,255,255,.8); }
+
+    @media (max-width:1000px) {
+      .chart-grid.cols-2, .chart-grid.cols-3 { grid-template-columns: 1fr; }
+      .insight-row { grid-template-columns: 1fr; }
+      .main { padding: 20px 16px 40px; }
+    }
+    @media (max-width:640px) {
+      .kpi-grid { grid-template-columns: repeat(2,1fr); }
+      .header-inner { padding: 0 16px; }
+      .header-study-title { font-size: 16px; }
+    }
+
+    .sample-banner {
+      background: linear-gradient(90deg, var(--rs-navy-dark) 0%, var(--rs-navy) 100%);
+      border-bottom: 2px solid var(--amber-500);
+      padding: 10px 32px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; font-size: 12px; color: rgba(255,255,255,.75); letter-spacing: .3px;
+    }
+    .sample-banner .sample-pill {
+      background: var(--amber-500); color: var(--rs-navy-dark);
+      font-size: 10px; font-weight: 800; letter-spacing: .8px;
+      text-transform: uppercase; padding: 3px 10px; border-radius: 99px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════ HEADER -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="header-logo-wrap">
+        <img src="file:///D:/RS%20Logos/RS-%20Logos,%20letterheads%20and%20cards/Logos/Research%20Solutions%20Dark%20Logo.png"
+             alt="Research Solutions"
+             onerror="this.style.display='none'; document.getElementById('logo-fallback').style.display='flex';" />
+        <div id="logo-fallback" style="display:none; align-items:center; gap:10px;">
+          <div style="width:40px;height:40px;background:var(--rs-red);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;">🔍</div>
+          <div>
+            <div style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px;">Research Solutions</div>
+            <div style="font-size:9px;color:rgba(255,255,255,.5);letter-spacing:.8px;text-transform:uppercase;">M&amp;A Research Solutions LLC</div>
+          </div>
+        </div>
+      </div>
+      <div class="header-study">
+        <div class="header-study-title">Empowering Girls — Endline Survey</div>
+        <div class="header-study-sub">Urban Health &amp; Safety · Gender Norms · Wellbeing · Student Aspirations</div>
+      </div>
+      <div class="header-meta">
+        <strong>Pakistan · Urban Schools</strong><br>
+        Field Collection: April 2026<br>
+        <span class="header-pill">45 Students · 2 Schools · Grade 8</span>
+      </div>
+    </div>
+    <nav class="nav-tabs" id="navTabs">
+      <button class="nav-tab active" onclick="showPanel('overview',this)">📊 Overview</button>
+      <button class="nav-tab" onclick="showPanel('profile',this)">🎒 Student Profile</button>
+      <button class="nav-tab" onclick="showPanel('academic',this)">📚 Academic Performance</button>
+      <button class="nav-tab" onclick="showPanel('safety',this)">🛡️ Safety &amp; Mobility</button>
+      <button class="nav-tab" onclick="showPanel('gender',this)">⚧ Gender Norms</button>
+      <button class="nav-tab" onclick="showPanel('wellbeing',this)">💚 Wellbeing</button>
+      <button class="nav-tab" onclick="showPanel('boys',this)">👦 Boys' Module</button>
+      <button class="nav-tab" onclick="showPanel('girls',this)">👧 Girls' Module</button>
+    </nav>
+  </div>
+</div>
+
+<div class="sample-banner">
+  <span class="sample-pill">Endline Data</span>
+  <span>This dashboard presents <strong style="color:#fff;">real endline survey data</strong> from the Empowering Girls programme evaluation in Pakistan. All respondent information is anonymised.</span>
+  <span class="sample-pill">April 2026</span>
+</div>
+
+<!-- ════════════════════ MAIN -->
+<div class="main">
+
+  <!-- ══ OVERVIEW ══ -->
+  <div class="panel active" id="panel-overview">
+    <div class="section-header">
+      <div class="section-header-accent"></div>
+      <div>
+        <h2>Study at a Glance</h2>
+        <p>A school-based endline survey evaluating the Empowering Girls programme across urban schools in Pakistan. The study measures changes in gender norms, safety perceptions, academic aspirations, and psychological wellbeing among Grade 8 students — with separate instruments for boys and girls using validated psychometric scales and Randomised Response Technique (RRT) for sensitive items.</p>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card navy">
+        <div class="kpi-icon">🏫</div>
+        <div class="kpi-value">2</div>
+        <div class="kpi-label">Schools Surveyed</div>
+        <div class="kpi-delta navy">1 District · Urban Pakistan</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon">🎒</div>
+        <div class="kpi-value">45</div>
+        <div class="kpi-label">Total Students</div>
+        <div class="kpi-delta up">100% Grade 8</div>
+      </div>
+      <div class="kpi-card teal">
+        <div class="kpi-icon">👧</div>
+        <div class="kpi-value">20</div>
+        <div class="kpi-label">Girls Surveyed</div>
+        <div class="kpi-delta up">Avg Age 13.6 yrs</div>
+      </div>
+      <div class="kpi-card amber">
+        <div class="kpi-icon">👦</div>
+        <div class="kpi-value">25</div>
+        <div class="kpi-label">Boys Surveyed</div>
+        <div class="kpi-delta neutral">Avg Age 14.0 yrs</div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-icon">🎓</div>
+        <div class="kpi-value">65%</div>
+        <div class="kpi-label">Girls Aspire to Professions</div>
+        <div class="kpi-delta up">Doctor / Engineer / Lawyer</div>
+      </div>
+      <div class="kpi-card navy">
+        <div class="kpi-icon">📅</div>
+        <div class="kpi-value">Apr 2026</div>
+        <div class="kpi-label">Data Collection Period</div>
+        <div class="kpi-delta navy">SurveyCTO · Digital CAPI</div>
+      </div>
+    </div>
+
+    <div class="callout-row">
+      <div class="callout teal">
+        <div class="callout-icon">📈</div>
+        <div class="callout-body">
+          <h4>Girls Outperform Boys Academically</h4>
+          <p>Girls averaged 54.2% in Grade 7 compared to 44.7% for boys — a 9.5 percentage-point gap indicating stronger academic performance among girls.</p>
+        </div>
+      </div>
+      <div class="callout primary">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <h4>Girls Report Lower Safety on Commute</h4>
+          <p>Girls rate commuting to school as less safe (2.85/4) compared to boys (3.16/4), reflecting gendered safety disparities in the school journey.</p>
+        </div>
+      </div>
+      <div class="callout amber">
+        <div class="callout-icon">👗</div>
+        <div class="callout-body">
+          <h4>80% of Girls Modify Behaviour</h4>
+          <p>16 out of 20 girls report sometimes or always changing their clothing due to safety concerns in their neighbourhood or on route to school.</p>
+        </div>
+      </div>
+      <div class="callout purple">
+        <div class="callout-icon">💪</div>
+        <div class="callout-body">
+          <h4>Girls Show Higher Self-Efficacy</h4>
+          <p>Girls score higher on self-efficacy items 1 and 2, particularly in ability to think of solutions and belief they can handle challenges.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Sample Composition — Boys vs Girls</h3>
+        <div class="chart-desc">Endline survey respondents by gender (n=45)</div>
+        <div class="chart-wrap"><canvas id="chartGenderSplit"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Outcome Index Radar — Boys vs Girls</h3>
+        <div class="chart-desc">Composite scores across five key study dimensions (scaled 0–100)</div>
+        <div class="chart-wrap tall"><canvas id="chartRadar"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-grid cols-3">
+      <div class="chart-card">
+        <h3>Academic Performance — Grade 7 %</h3>
+        <div class="chart-desc">Previous year academic scores by gender group</div>
+        <div class="chart-wrap"><canvas id="chartAcadOverview"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Safety Perceptions — Mean Scores</h3>
+        <div class="chart-desc">Average safety rating (1=unsafe, 4=very safe) by context and gender</div>
+        <div class="chart-wrap"><canvas id="chartSafetyOverview"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Educational Aspirations</h3>
+        <div class="chart-desc">Highest level of education students aspire to complete</div>
+        <div class="chart-wrap"><canvas id="chartAspOverview"></canvas></div>
+      </div>
+    </div>
+
+    <p class="footnote">Data collected April 6–7, 2026 via SurveyCTO digital CAPI survey. Both boys and girls instruments included validated psychometric scales (PQL, Self-Efficacy, CBT, Impulse Control, CSD) and Randomised Response Technique (RRT/garbling) for sensitive harassment measures. Study design and analysis by Research Solutions (M&amp;A Research Solutions LLC) | www.rs.org.pk</p>
+  </div>
+
+  <!-- ══ STUDENT PROFILE ══ -->
+  <div class="panel" id="panel-profile">
+    <div class="section-header">
+      <div class="section-header-accent"></div>
+      <div>
+        <h2>Student Demographics &amp; Family Background</h2>
+        <p>Who are the students in this study? Age distribution, household composition, parental education and occupation, language spoken at home, and household asset ownership — painting a comprehensive picture of the socioeconomic context.</p>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-icon">🎂</div><div class="kpi-value">14.0</div><div class="kpi-label">Boys' Avg Age (Years)</div><div class="kpi-delta navy">Range: 11–16 yrs</div></div>
+      <div class="kpi-card teal"><div class="kpi-icon">🎂</div><div class="kpi-value">13.6</div><div class="kpi-label">Girls' Avg Age (Years)</div><div class="kpi-delta navy">Range: 13–15 yrs</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">👨‍👩‍👦‍👦</div><div class="kpi-value">4.9</div><div class="kpi-label">Boys' Avg Siblings</div><div class="kpi-delta neutral">Girls avg: 4.5 siblings</div></div>
+      <div class="kpi-card navy"><div class="kpi-icon">🏠</div><div class="kpi-value">100%</div><div class="kpi-label">Boys Own Their Home</div><div class="kpi-delta up">Girls: 95%</div></div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Father's Education Level</h3>
+        <div class="chart-desc">Highest education attained by father (boys n=25, girls n=20)</div>
+        <div class="chart-wrap"><canvas id="chartFatherEdu"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Mother's Education Level</h3>
+        <div class="chart-desc">Highest education attained by mother (boys n=25, girls n=20)</div>
+        <div class="chart-wrap"><canvas id="chartMotherEdu"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Father's Occupation</h3>
+        <div class="chart-desc">Primary occupation of student's father by gender of respondent</div>
+        <div class="chart-wrap"><canvas id="chartFatherOcc"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Mother's Occupation</h3>
+        <div class="chart-desc">Primary occupation of student's mother by gender of respondent</div>
+        <div class="chart-wrap"><canvas id="chartMotherOcc"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Household Asset Ownership</h3>
+        <div class="chart-desc">Percentage of households owning each asset — boys vs girls</div>
+        <div class="chart-wrap tall"><canvas id="chartAssets"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Language Spoken at Home</h3>
+        <div class="chart-desc">Primary language of the household (boys n=25, girls n=20)</div>
+        <div class="chart-wrap"><canvas id="chartLanguage"></canvas></div>
+      </div>
+    </div>
+
+    <div class="insight-row">
+      <div class="insight-box navy">
+        <strong>Father's Education:</strong> Intermediate (Grade 12) is the modal education level for fathers of both boys (32%) and girls (40%), suggesting relatively educated household heads. However, 28% of boys' fathers and 20% of girls' fathers have no or primary-only education.
+      </div>
+      <div class="insight-box teal">
+        <strong>Mother's Employment:</strong> 60% of boys' mothers are full-time homemakers, compared to just 30% of girls' mothers — suggesting girls in this sample come from households with more economically active mothers, which may influence gender norm exposure.
+      </div>
+    </div>
+    <p class="footnote">Education levels: 1=None/Primary, 2=Middle (Grades 6–8), 3=Matric (Grade 10), 4=Intermediate (Grade 12), 5=Bachelors, 6=Masters/Post-Graduate. Occupation codes: 1=Government Employee, 2=Private Employee, 3=Self-Employed/Business, 8=Homemaker.</p>
+  </div>
+
+  <!-- ══ ACADEMIC PERFORMANCE ══ -->
+  <div class="panel" id="panel-academic">
+    <div class="section-header">
+      <div class="section-header-accent"></div>
+      <div>
+        <h2>Academic Performance &amp; Aspirations</h2>
+        <p>Student academic outcomes from Grade 7 (preceding year), school attendance patterns, barriers to education, and educational aspirations — examining the gender gap in both current performance and future ambitions.</p>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card teal"><div class="kpi-icon">📊</div><div class="kpi-value">54.2%</div><div class="kpi-label">Girls Avg Grade 7 Score</div><div class="kpi-delta up">Range: 37%–82%</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">📊</div><div class="kpi-value">44.7%</div><div class="kpi-label">Boys Avg Grade 7 Score</div><div class="kpi-delta down">Range: 33%–84%</div></div>
+      <div class="kpi-card navy"><div class="kpi-icon">📅</div><div class="kpi-value">1.9</div><div class="kpi-label">Boys Avg Absence Days</div><div class="kpi-delta neutral">Girls: 3.4 days avg</div></div>
+      <div class="kpi-card purple"><div class="kpi-icon">🎓</div><div class="kpi-value">65%</div><div class="kpi-label">Girls Want Pro. Degree</div><div class="kpi-delta up">vs 20% of boys</div></div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Grade 7 Score Distribution</h3>
+        <div class="chart-desc">Distribution of previous year academic percentage scores by gender</div>
+        <div class="chart-wrap"><canvas id="chartGradeDistribution"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Educational Aspirations</h3>
+        <div class="chart-desc">Highest level of education students hope to complete — boys vs girls</div>
+        <div class="chart-wrap"><canvas id="chartAspirations"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Absence Days Distribution</h3>
+        <div class="chart-desc">Number of school days missed in the past term (students who reported absences)</div>
+        <div class="chart-wrap"><canvas id="chartAbsence"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Academic Performance Band Comparison</h3>
+        <div class="chart-desc">Students categorised into performance bands (&lt;45%, 45–59%, 60–74%, 75%+)</div>
+        <div class="chart-wrap"><canvas id="chartPerfBands"></canvas></div>
+      </div>
+    </div>
+
+    <div class="insight-row">
+      <div class="insight-box primary">
+        <strong>Gender Performance Gap:</strong> Girls outperform boys by an average of <strong>9.5 percentage points</strong> in Grade 7 scores (54.2% vs 44.7%). This performance advantage coexists with girls facing greater safety constraints and mobility restrictions — suggesting academic resilience despite structural barriers.
+      </div>
+      <div class="insight-box purple">
+        <strong>Aspiration Gap:</strong> <strong>65% of girls</strong> aspire to a professional degree (doctor, engineer, lawyer) compared to only <strong>20% of boys</strong>. Boys are more likely to aspire to intermediate-level qualifications. This suggests the Empowering Girls programme may be successfully raising female educational ambitions.
+      </div>
+    </div>
+
+    <p class="footnote">Academic performance data based on student self-report of Grade 7 percentage scores. Aspirations coded as: Matric=Grade 10, Intermediate=Grade 12, Bachelors=Undergraduate, Masters=Postgraduate, Professional=Doctor/Engineer/Lawyer or equivalent professional degree.</p>
+  </div>
+
+  <!-- ══ SAFETY & MOBILITY ══ -->
+  <div class="panel" id="panel-safety">
+    <div class="section-header">
+      <div class="section-header-accent"></div>
+      <div>
+        <h2>Safety Perceptions &amp; Mobility</h2>
+        <p>How safe do students feel commuting to school, in their school neighbourhood, and at home? How do girls navigate safety concerns through behavioural adaptations? This panel explores the gendered dimensions of safety and mobility for urban school students.</p>
+      </div>
+    </div>
+
+    <div class="sensor-grid">
+      <div class="sensor-card teal">
+        <div class="sensor-icon">🚶</div>
+        <div class="sensor-value">3.16</div>
+        <div class="sensor-unit">/ 4.0</div>
+        <div class="sensor-label">Boys — Commute Safety</div>
+        <div class="sensor-status ok">Moderately Safe</div>
+      </div>
+      <div class="sensor-card red">
+        <div class="sensor-icon">🚶‍♀️</div>
+        <div class="sensor-value">2.85</div>
+        <div class="sensor-unit">/ 4.0</div>
+        <div class="sensor-label">Girls — Commute Safety</div>
+        <div class="sensor-status warn">Moderate Concern</div>
+      </div>
+      <div class="sensor-card amber">
+        <div class="sensor-icon">🏫</div>
+        <div class="sensor-value">2.88</div>
+        <div class="sensor-unit">/ 4.0</div>
+        <div class="sensor-label">Boys — School Neighbourhood</div>
+        <div class="sensor-status warn">Moderate Concern</div>
+      </div>
+      <div class="sensor-card teal">
+        <div class="sensor-icon">🏫</div>
+        <div class="sensor-value">3.10</div>
+        <div class="sensor-unit">/ 4.0</div>
+        <div class="sensor-label">Girls — School Neighbourhood</div>
+        <div class="sensor-status ok">Moderately Safe</div>
+      </div>
+      <div class="sensor-card">
+        <div class="sensor-icon">🏠</div>
+        <div class="sensor-value">3.40</div>
+        <div class="sensor-unit">/ 4.0</div>
+        <div class="sensor-label">Boys — Home Area</div>
+        <div class="sensor-status ok">Mostly Safe</div>
+      </div>
+      <div class="sensor-card">
+        <div class="sensor-icon">🏠</div>
+        <div class="sensor-value">3.25</div>
+        <div class="sensor-unit">/ 4.0</div>
+        <div class="sensor-label">Girls — Home Area</div>
+        <div class="sensor-status ok">Moderately Safe</div>
+      </div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Safety Perception — Detailed Distribution</h3>
+        <div class="chart-desc">Response distributions across all three safety contexts, boys vs girls (1=Not safe, 4=Very safe)</div>
+        <div class="chart-wrap tall"><canvas id="chartSafetyDetail"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>School Commute Mode</h3>
+        <div class="chart-desc">Primary mode of transport to school — boys vs girls</div>
+        <div class="chart-wrap"><canvas id="chartTransport"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Travel Time to School</h3>
+        <div class="chart-desc">Average commute duration in minutes — distribution by gender</div>
+        <div class="chart-wrap"><canvas id="chartTravelTime"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Girls' Safety Behaviour Modifications</h3>
+        <div class="chart-desc">Frequency of behaviour adaptation to avoid safety risks (girls only, n=20)</div>
+        <div class="chart-wrap"><canvas id="chartBehaviorMods"></canvas></div>
+      </div>
+    </div>
+
+    <div class="insight-row">
+      <div class="insight-box primary">
+        <strong>Commute Safety Gap:</strong> Boys rate their commute to school as safer than girls (3.16 vs 2.85 on a 4-point scale). However, girls feel slightly safer in their school neighbourhood (3.10 vs 2.88 for boys), indicating that school areas may benefit from safety initiatives that carry forward into the commute route.
+      </div>
+      <div class="insight-box amber">
+        <strong>Behavioural Adaptation:</strong> Girls navigate safety concerns through adaptation — <strong>80% sometimes or always change their clothing</strong>, 65% sometimes or always change their timing, and 65% sometimes or always change their route to school. These adaptations represent a significant daily burden and indicator of perceived risk.
+      </div>
+    </div>
+    <p class="footnote">Safety scale: 1=Not safe at all, 2=Not very safe, 3=Somewhat safe, 4=Very safe. Behaviour modification scale: 1=Always, 2=Sometimes, 3=Rarely, 4=Never. Travel times self-reported by students. Boys' school: School #141 (50 students enrolled Grade 7); Girls' school: 35–49 students enrolled.</p>
+  </div>
+
+  <!-- ══ GENDER NORMS ══ -->
+  <div class="panel" id="panel-gender">
+    <div class="section-header">
+      <div class="section-header-accent"></div>
+      <div>
+        <h2>Gender Norms &amp; Harassment Attitudes</h2>
+        <p>Measuring gender norm endorsement among students using a validated 4-item scale covering household roles, education access, working mothers, and women's safety. Also captures bystander attitudes toward harassment and blame attribution — a core outcome of the Empowering Girls programme.</p>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-icon">🏠</div><div class="kpi-value">3.16</div><div class="kpi-label">Boys: Girls Focus on Household</div><div class="kpi-delta neutral">Girls avg: 3.40</div></div>
+      <div class="kpi-card navy"><div class="kpi-icon">🤝</div><div class="kpi-value">4.48</div><div class="kpi-label">Boys: Men Must Protect Women</div><div class="kpi-delta down">Girls avg: 4.60</div></div>
+      <div class="kpi-card teal"><div class="kpi-icon">👁️</div><div class="kpi-value">44%</div><div class="kpi-label">Boys Witnessed Verbal Harassment</div><div class="kpi-delta neutral">Girls: 70%</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">⚖️</div><div class="kpi-value">48%</div><div class="kpi-label">Boys Correctly Attribute No Fault</div><div class="kpi-delta up">Girls: 20%</div></div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Gender Norms Scale — Mean Scores</h3>
+        <div class="chart-desc">Agreement with gender norm statements (1=Strongly Disagree, 5=Strongly Agree) — boys vs girls</div>
+        <div class="chart-wrap"><canvas id="chartGenderNorms"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Gender Norms — Response Distributions</h3>
+        <div class="chart-desc">Full distribution of responses to each gender norm item</div>
+        <div class="chart-wrap tall"><canvas id="chartGenderNormsDetail"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Harassment — Witnessing Experiences</h3>
+        <div class="chart-desc">Whether students witnessed physical or verbal harassment of others (1=Yes, 2=No)</div>
+        <div class="chart-wrap"><canvas id="chartHarassWitness"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Blame Attribution — Whose Fault?</h3>
+        <div class="chart-desc">Student responses to "touch_fault" — who is responsible when harassment occurs (1=Completely victim's fault, 5=Completely perpetrator's fault)</div>
+        <div class="chart-wrap"><canvas id="chartBlame"></canvas></div>
+      </div>
+    </div>
+
+    <div class="insight-row">
+      <div class="insight-box primary">
+        <strong>Witnessing Harassment:</strong> <strong>70% of girls</strong> report having witnessed verbal harassment compared to only 44% of boys. This higher exposure among girls may reflect their greater vulnerability in public spaces and reinforces the importance of bystander intervention training as a programme component.
+      </div>
+      <div class="insight-box amber">
+        <strong>Blame Attribution:</strong> When asked who is responsible for harassment, boys show clearer attribution of fault to perpetrators — 48% strongly place blame on perpetrators. Girls show a more distributed response with 50% attributing it to "somewhat" the perpetrator (code 3), potentially reflecting internalised stigma that the programme aims to address.
+      </div>
+    </div>
+    <p class="footnote">Gender norms scale: 1=Strongly Disagree, 5=Strongly Agree. Items: G2="Girls should focus on household tasks"; G3="Education is equally important for boys and girls" (reverse-coded); G5="Children suffer when mothers work"; G6="Women need male protection to be safe". Blame scale: 1=Completely victim's fault through 5=Completely perpetrator's fault.</p>
+  </div>
+
+  <!-- ══ WELLBEING ══ -->
+  <div class="panel" id="panel-wellbeing">
+    <div class="section-header">
+      <div class="section-header-accent"></div>
+      <div>
+        <h2>Psychological Wellbeing &amp; Self-Efficacy</h2>
+        <p>Student psychological outcomes measured using the Pediatric Quality of Life (PQL) scale across five dimensions — mood, learning, friendships, family, and overall life quality — alongside a 3-item self-efficacy scale assessing students' belief in their capacity to handle challenges.</p>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card teal"><div class="kpi-icon">😊</div><div class="kpi-value">4.12</div><div class="kpi-label">Boys Overall Life Quality (PQL)</div><div class="kpi-delta up">Girls: 4.15 / 5.0</div></div>
+      <div class="kpi-card"><div class="kpi-icon">🤝</div><div class="kpi-value">4.48</div><div class="kpi-label">Boys Family Wellbeing (PQL)</div><div class="kpi-delta up">Girls: 4.25 / 5.0</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">💪</div><div class="kpi-value">2.04</div><div class="kpi-label">Boys Self-Efficacy Item 1</div><div class="kpi-delta neutral">Girls: 2.45 / 3.0</div></div>
+      <div class="kpi-card purple"><div class="kpi-icon">🧠</div><div class="kpi-value">2.80</div><div class="kpi-label">Girls: "I Can Find Solutions"</div><div class="kpi-delta up">Boys: 2.44 / 3.0</div></div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>PQL Wellbeing Scale — Mean Scores</h3>
+        <div class="chart-desc">Pediatric Quality of Life items rated 1–5 (Never to Always) — boys vs girls</div>
+        <div class="chart-wrap"><canvas id="chartPQL"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Self-Efficacy Scale — Boys vs Girls</h3>
+        <div class="chart-desc">Self-efficacy items rated 1–3 (Disagree to Agree) — boys vs girls</div>
+        <div class="chart-wrap"><canvas id="chartSelfEfficacy"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>PQL Item Distribution — Girls</h3>
+        <div class="chart-desc">Full distribution of girls' responses across all 5 PQL items</div>
+        <div class="chart-wrap tall"><canvas id="chartPQLGirls"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>PQL Item Distribution — Boys</h3>
+        <div class="chart-desc">Full distribution of boys' responses across all 5 PQL items</div>
+        <div class="chart-wrap tall"><canvas id="chartPQLBoys"></canvas></div>
+      </div>
+    </div>
+
+    <div class="insight-row">
+      <div class="insight-box teal">
+        <strong>Wellbeing Scores:</strong> Both boys and girls report high wellbeing on the PQL scale, with family relationships receiving the highest scores (boys 4.48, girls 4.25). Girls report slightly higher friendship wellbeing (4.20 vs 3.92 for boys), while boys score higher on family and learning dimensions — suggesting complementary patterns of social connectedness.
+      </div>
+      <div class="insight-box purple">
+        <strong>Self-Efficacy Advantage:</strong> Girls score higher than boys on two of three self-efficacy items, particularly "I can think of solutions to problems" (2.80 vs 2.44) and "I can handle challenges" (2.45 vs 2.04). This aligns with girls' higher academic aspirations and suggests the programme may be building girls' internal agency.
+      </div>
+    </div>
+    <p class="footnote">PQL Scale: Items ask how often each applies in the past month (1=Never, 2=Almost Never, 3=Sometimes, 4=Often, 5=Almost Always). Self-Efficacy Scale: 3-point agreement scale (1=Disagree, 2=Neutral, 3=Agree). Higher scores indicate better outcomes on both scales.</p>
+  </div>
+
+  <!-- ══ BOYS' MODULE ══ -->
+  <div class="panel" id="panel-boys">
+    <div class="section-header">
+      <div class="section-header-accent"></div>
+      <div>
+        <h2>Boys' Module — Masculinity, Impulse Control &amp; Peer Pressure</h2>
+        <p>The boys' instrument includes three additional scales not administered to girls: a 5-item Masculinity Norms scale, an 8-item Impulse Control assessment, and a 3-item Cognitive Behaviour Therapy (CBT) cognitions scale measuring thought flexibility. Peer pressure susceptibility was also measured across 3 items.</p>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card navy"><div class="kpi-icon">🔨</div><div class="kpi-value">3.52</div><div class="kpi-label">Men Should Do Repairs</div><div class="kpi-delta down">Mean / 5.0 — Traditional</div></div>
+      <div class="kpi-card teal"><div class="kpi-icon">🤐</div><div class="kpi-value">1.56</div><div class="kpi-label">Must Tease to Fit In</div><div class="kpi-delta up">Rejected by 92% of boys</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">🎮</div><div class="kpi-value">4.64</div><div class="kpi-label">Impulse Control (Item 8)</div><div class="kpi-delta up">High self-control reported</div></div>
+      <div class="kpi-card purple"><div class="kpi-icon">👥</div><div class="kpi-value">2.20</div><div class="kpi-label">Peer Pressure Item 1</div><div class="kpi-delta neutral">Moderate susceptibility</div></div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Masculinity Norms Scale — Boys (n=25)</h3>
+        <div class="chart-desc">Agreement with traditional masculinity statements (1=Strongly Disagree, 5=Strongly Agree)</div>
+        <div class="chart-wrap"><canvas id="chartMasculinity"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Masculinity Norms — Response Distributions</h3>
+        <div class="chart-desc">Full response distributions for each masculinity norm item</div>
+        <div class="chart-wrap tall"><canvas id="chartMascDetail"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Impulse Control — Boys (n=25)</h3>
+        <div class="chart-desc">Mean scores across 8 impulse control items (1=Never to 5=Always)</div>
+        <div class="chart-wrap"><canvas id="chartImpulse"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>CBT Cognitions &amp; Peer Pressure — Boys</h3>
+        <div class="chart-desc">Cognitive Behaviour Therapy thought patterns (1–4 scale) and Peer Pressure (1–4 scale)</div>
+        <div class="chart-wrap"><canvas id="chartCBTPeer"></canvas></div>
+      </div>
+    </div>
+
+    <div class="insight-row">
+      <div class="insight-box navy">
+        <strong>Masculinity Norms:</strong> Boys show mixed patterns — high traditional endorsement of men doing household repairs (3.52) and men not showing worry/fear (3.52), but strongly reject the idea that "boys must tease others to fit in" (mean 1.56, with 92% disagreeing). The rejection of teasing norms is an encouraging indicator for bystander behaviour.
+      </div>
+      <div class="insight-box teal">
+        <strong>Impulse Control:</strong> Boys show relatively high scores on item 8 (4.64) which measures a positive self-control attribute, but lower scores on items 4–6 suggesting some difficulty with immediate impulse regulation. The bimodal distribution (many at 1=Never and 5=Always) across several items indicates heterogeneous profiles within the sample.
+      </div>
+    </div>
+
+    <div class="progress-list" style="margin-bottom:24px;">
+      <div>
+        <div class="progress-header">
+          <span class="progress-label">M1: Men should handle all household repairs</span>
+          <span class="progress-pct">3.52 / 5.0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill navy" style="width:70.4%"></div></div>
+      </div>
+      <div>
+        <div class="progress-header">
+          <span class="progress-label">M2: Men shouldn't need to ask for help</span>
+          <span class="progress-pct">3.20 / 5.0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill navy" style="width:64%"></div></div>
+      </div>
+      <div>
+        <div class="progress-header">
+          <span class="progress-label">M3: Men shouldn't show worry or fear</span>
+          <span class="progress-pct">3.52 / 5.0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill amber" style="width:70.4%"></div></div>
+      </div>
+      <div>
+        <div class="progress-header">
+          <span class="progress-label">M4: A guy must win games/competitions</span>
+          <span class="progress-pct">3.36 / 5.0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill amber" style="width:67.2%"></div></div>
+      </div>
+      <div>
+        <div class="progress-header">
+          <span class="progress-label">M5: Boys must tease others to fit in (REJECTED)</span>
+          <span class="progress-pct">1.56 / 5.0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill teal" style="width:31.2%"></div></div>
+      </div>
+    </div>
+
+    <p class="footnote">Masculinity Norms: 5-item scale measuring traditional masculine role endorsement (1=Strongly Disagree, 5=Strongly Agree). Impulse Control: 8-item scale (1=Never, 5=Always); higher scores on positive items indicate better self-regulation. CBT scale: 4-point scale measuring cognitive thought patterns. Peer Pressure: 4-point scale (1=Never agree, 4=Always agree). Boys only (n=25).</p>
+  </div>
+
+  <!-- ══ GIRLS' MODULE ══ -->
+  <div class="panel" id="panel-girls">
+    <div class="section-header">
+      <div class="section-header-accent"></div>
+      <div>
+        <h2>Girls' Module — Mobility, Household Time &amp; Harassment Response</h2>
+        <p>The girls' instrument includes an extended 7-day activity diary, household time-use measures, and detailed harassment response and reporting modules. This panel examines girls' daily mobility patterns, time burden of household tasks, and their strategies for navigating and reporting harassment experiences.</p>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card navy"><div class="kpi-icon">🧹</div><div class="kpi-value">3.0h</div><div class="kpi-label">Avg Daily Cleaning Time</div><div class="kpi-delta down">Highest household burden</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">👶</div><div class="kpi-value">3.2h</div><div class="kpi-label">Avg Daily Caring Time</div><div class="kpi-delta neutral">Child/elderly care</div></div>
+      <div class="kpi-card teal"><div class="kpi-icon">🍳</div><div class="kpi-value">2.0h</div><div class="kpi-label">Avg Daily Cooking Time</div><div class="kpi-delta neutral">Food preparation</div></div>
+      <div class="kpi-card purple"><div class="kpi-icon">📢</div><div class="kpi-value">85%</div><div class="kpi-label">Would Report to Family</div><div class="kpi-delta up">Primary support network</div></div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Girls' Daily Household Time Use</h3>
+        <div class="chart-desc">Average hours per day girls spend on household activities (girls n=20)</div>
+        <div class="chart-wrap"><canvas id="chartTimeUse"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Safety Behaviour Modifications — Frequency</h3>
+        <div class="chart-desc">How often girls change route, timing, or clothing due to safety concerns (1=Always, 4=Never)</div>
+        <div class="chart-wrap"><canvas id="chartGirlsBehavior"></canvas></div>
+      </div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>Harassment Reporting — Who Would Girls Tell?</h3>
+        <div class="chart-desc">Proportion of girls who would share a harassment experience with each network member</div>
+        <div class="chart-wrap"><canvas id="chartHarassShare"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Verbal Harassment Witnessed — Girls vs Boys</h3>
+        <div class="chart-desc">Proportion who witnessed verbal harassment of others (RRT garbling method)</div>
+        <div class="chart-wrap"><canvas id="chartHarassGender"></canvas></div>
+      </div>
+    </div>
+
+    <div class="insight-row">
+      <div class="insight-box navy">
+        <strong>Household Time Burden:</strong> Girls spend an average of <strong>3.2 hours on caregiving</strong> and <strong>3.0 hours on cleaning</strong> per day — a substantial non-academic time burden that may affect study time and school performance. Despite this burden, girls still outperform boys academically, suggesting significant resilience.
+      </div>
+      <div class="insight-box teal">
+        <strong>Harassment Reporting:</strong> <strong>85% of girls</strong> (17/20) would report harassment to formal authorities, with family (65% — friends/siblings) being the primary informal channel. Only 5% would tell no one, suggesting a relatively supportive social network. The programme's emphasis on safe disclosure channels appears to be effective.
+      </div>
+    </div>
+
+    <div class="callout-row">
+      <div class="callout primary">
+        <div class="callout-icon">👗</div>
+        <div class="callout-body">
+          <h4>Clothing Modification</h4>
+          <p>80% of girls sometimes or always change what they wear due to safety concerns — the most common behavioural adaptation reported.</p>
+        </div>
+      </div>
+      <div class="callout amber">
+        <div class="callout-icon">⏰</div>
+        <div class="callout-body">
+          <h4>Timing Adaptation</h4>
+          <p>65% of girls sometimes or always change what time they travel — avoiding certain hours perceived as less safe for female movement.</p>
+        </div>
+      </div>
+      <div class="callout navy">
+        <div class="callout-icon">🗺️</div>
+        <div class="callout-body">
+          <h4>Route Changes</h4>
+          <p>65% of girls sometimes or always change their route to school — adding time and distance to avoid perceived danger spots.</p>
+        </div>
+      </div>
+      <div class="callout teal">
+        <div class="callout-icon">🚨</div>
+        <div class="callout-body">
+          <h4>Safety Awareness</h4>
+          <p>55% of girls (code 1+2 on identify_escape) actively identify escape routes or safety strategies when in public — a key programme skill.</p>
+        </div>
+      </div>
+    </div>
+
+    <p class="footnote">Girls' module data (n=20). Household time use measured in approximate daily hours. Harassment sharing variables: 0=No, 1=Yes — respondents could select multiple people they would tell. Reporting: 1=Yes would report, 2=No. Behaviour modification: 1=Always, 2=Sometimes, 3=Rarely, 4=Never. RRT (garbling) used for sensitive harassment items to protect respondent anonymity.</p>
+  </div>
+
+</div><!-- /main -->
+
+<div class="page-footer">
+  <strong>Empowering Girls — Endline Survey Dashboard</strong> &nbsp;·&nbsp;
+  Research Solutions (M&amp;A Research Solutions LLC) &nbsp;·&nbsp;
+  <strong>www.rs.org.pk</strong> &nbsp;·&nbsp;
+  Data collected April 2026 &nbsp;·&nbsp; Pakistan Urban Schools
+</div>
+
+<script>
+// ── Panel Navigation
+function showPanel(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Register plugins
+Chart.register(ChartDataLabels);
+
+// ── Colour palette
+const RED    = '#E8192C';
+const NAVY   = '#2D3450';
+const TEAL   = '#0891B2';
+const AMBER  = '#F59E0B';
+const PURPLE = '#8B5CF6';
+const TEAL_L = 'rgba(8,145,178,.15)';
+const RED_L  = 'rgba(232,25,44,.12)';
+const NAVY_L = 'rgba(45,52,80,.12)';
+const AMB_L  = 'rgba(245,158,11,.15)';
+const PUR_L  = 'rgba(139,92,246,.12)';
+
+const BOYS_COLOR  = NAVY;
+const GIRLS_COLOR = '#C41020';
+
+const defaults = {
+  plugins: {
+    legend: { labels: { font: { family: 'Inter', size: 12 }, color: '#334155' } },
+    datalabels: { display: false }
+  },
+  scales: {
+    x: { ticks: { font: { family: 'Inter', size: 11 }, color: '#475569' }, grid: { display: false } },
+    y: { ticks: { font: { family: 'Inter', size: 11 }, color: '#475569' }, grid: { color: '#f1f5f9' } }
+  }
+};
+
+// ══════════════════════════════════════════
+// OVERVIEW CHARTS
+// ══════════════════════════════════════════
+
+// Gender Split Doughnut
+new Chart(document.getElementById('chartGenderSplit'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Boys (25)', 'Girls (20)'],
+    datasets: [{ data: [25, 20], backgroundColor: [NAVY, RED], borderWidth: 3, borderColor: '#fff' }]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true,
+        color: '#fff', font: { family: 'Inter', size: 13, weight: 700 },
+        formatter: (v) => v + ' students'
+      },
+      legend: { position: 'bottom', labels: { font: { family: 'Inter', size: 13 }, padding: 16 } }
+    }
+  }
+});
+
+// Radar Chart — Outcome Index
+new Chart(document.getElementById('chartRadar'), {
+  type: 'radar',
+  data: {
+    labels: ['Academic\nPerformance', 'Safety\nPerception', 'Wellbeing\n(PQL)', 'Self-\nEfficacy', 'Gender\nEquity Norms'],
+    datasets: [
+      {
+        label: 'Boys',
+        data: [44.7, 71.3, 82.2, 62.5, 48],
+        borderColor: NAVY, backgroundColor: NAVY_L, borderWidth: 2, pointBackgroundColor: NAVY, pointRadius: 5
+      },
+      {
+        label: 'Girls',
+        data: [54.2, 74.2, 81.5, 74.2, 52],
+        borderColor: RED, backgroundColor: RED_L, borderWidth: 2, pointBackgroundColor: RED, pointRadius: 5
+      }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: { display: false },
+      legend: { position: 'bottom' }
+    },
+    scales: {
+      r: {
+        min: 0, max: 100,
+        ticks: { font: { family: 'Inter', size: 10 }, color: '#475569', stepSize: 25 },
+        grid: { color: '#e2e8f0' },
+        pointLabels: { font: { family: 'Inter', size: 11 }, color: '#334155' }
+      }
+    }
+  }
+});
+
+// Academic Overview Bar
+new Chart(document.getElementById('chartAcadOverview'), {
+  type: 'bar',
+  data: {
+    labels: ['Boys (n=25)', 'Girls (n=20)'],
+    datasets: [{
+      label: 'Avg Grade 7 %',
+      data: [44.7, 54.2],
+      backgroundColor: [NAVY, RED],
+      borderRadius: 8, borderSkipped: false
+    }]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 13, weight: 700 },
+        formatter: v => v + '%'
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0, max: 80, title: { display: true, text: 'Average %', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Safety Overview Bar
+new Chart(document.getElementById('chartSafetyOverview'), {
+  type: 'bar',
+  data: {
+    labels: ['Commute\nto School', 'School\nNeighbourhood', 'Home\nArea'],
+    datasets: [
+      { label: 'Boys', data: [3.16, 2.88, 3.40], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls', data: [2.85, 3.10, 3.25], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 11, weight: 600 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0, max: 4.5, title: { display: true, text: 'Mean Score (1–4)', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Aspirations Overview Doughnut
+new Chart(document.getElementById('chartAspOverview'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Matric', 'Intermediate', 'Bachelors', 'Masters', 'Professional Degree'],
+    datasets: [{
+      label: 'Girls Aspirations',
+      data: [1, 2, 0, 4, 13],
+      backgroundColor: [RED, AMBER, TEAL, NAVY, PURPLE],
+      borderWidth: 3, borderColor: '#fff'
+    }]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, color: '#fff',
+        font: { family: 'Inter', size: 11, weight: 700 },
+        formatter: (v, ctx) => v > 0 ? v : ''
+      },
+      legend: { position: 'bottom', labels: { font: { family: 'Inter', size: 11 }, padding: 10 } },
+      title: { display: true, text: 'Girls (n=20)', font: { family: 'Inter', size: 12 }, color: '#6B7494', padding: { bottom: 6 } }
+    }
+  }
+});
+
+// ══════════════════════════════════════════
+// STUDENT PROFILE CHARTS
+// ══════════════════════════════════════════
+
+// Father Education
+new Chart(document.getElementById('chartFatherEdu'), {
+  type: 'bar',
+  data: {
+    labels: ['None/Primary', 'Middle', 'Matric', 'Intermediate', 'Bachelors', 'Masters+'],
+    datasets: [
+      { label: 'Boys', data: [7, 5, 3, 8, 2, 0], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls', data: [4, 5, 2, 8, 0, 1], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: { ...defaults.plugins, datalabels: { display: false } },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, title: { display: true, text: 'Number of Students', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Mother Education
+new Chart(document.getElementById('chartMotherEdu'), {
+  type: 'bar',
+  data: {
+    labels: ['None/Primary', 'Middle', 'Matric', 'Intermediate', 'Masters+'],
+    datasets: [
+      { label: 'Boys', data: [10, 8, 1, 3, 2], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls', data: [6, 7, 2, 5, 0], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: { ...defaults.plugins, datalabels: { display: false } },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, title: { display: true, text: 'Number of Students', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Father Occupation
+new Chart(document.getElementById('chartFatherOcc'), {
+  type: 'bar',
+  data: {
+    labels: ['Government\nEmployee', 'Private\nEmployee', 'Self-Employed\n/ Business', 'Farming', 'Skilled\nLabour', 'Other'],
+    datasets: [
+      { label: 'Boys', data: [7, 10, 5, 1, 1, 1], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls', data: [5, 5, 9, 0, 1, 0], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: { ...defaults.plugins, datalabels: { display: false } },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, title: { display: true, text: 'Number of Students', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Mother Occupation
+new Chart(document.getElementById('chartMotherOcc'), {
+  type: 'bar',
+  data: {
+    labels: ['Government\nEmployee', 'Private\nEmployee', 'Self-Employed', 'Homemaker', 'Other'],
+    datasets: [
+      { label: 'Boys', data: [3, 5, 1, 15, 1], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls', data: [0, 10, 2, 6, 2], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: { ...defaults.plugins, datalabels: { display: false } },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, title: { display: true, text: 'Number of Students', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Assets
+new Chart(document.getElementById('chartAssets'), {
+  type: 'bar',
+  data: {
+    labels: ['Refrigerator', 'Television', 'Motorcycle/\nBicycle', 'Car/Van', 'Computer/\nLaptop', 'Own House', 'Smartphone', 'Internet\n/WiFi', 'Agricultural\nLand', 'Livestock', 'Bank\nAccount', 'Business\n/Shop', 'Jewellery\n/Invest.'],
+    datasets: [
+      { label: 'Boys %', data: [88, 64, 92, 36, 16, 100, 76, 16, 44, 68, 48, 48, 20], backgroundColor: NAVY, borderRadius: 4, borderSkipped: false },
+      { label: 'Girls %', data: [95, 80, 90, 45, 20, 95, 70, 20, 10, 60, 50, 35, 25], backgroundColor: RED,  borderRadius: 4, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    indexAxis: 'y',
+    plugins: { ...defaults.plugins, datalabels: { display: false } },
+    scales: {
+      x: { ...defaults.scales.x, min: 0, max: 110, title: { display: true, text: '% Owning Asset', font: { family: 'Inter', size: 11 } } },
+      y: { ticks: { font: { family: 'Inter', size: 10 }, color: '#475569' }, grid: { display: false } }
+    }
+  }
+});
+
+// Language
+new Chart(document.getElementById('chartLanguage'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Urdu', 'Punjabi', 'Pashto', 'Other'],
+    datasets: [
+      {
+        label: 'Boys', data: [14, 1, 6, 4],
+        backgroundColor: [NAVY, TEAL, AMBER, '#94a3b8'],
+        borderWidth: 3, borderColor: '#fff'
+      }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, color: '#fff',
+        font: { family: 'Inter', size: 12, weight: 700 },
+        formatter: (v, ctx) => v > 0 ? ctx.chart.data.labels[ctx.dataIndex] + '\n' + v : ''
+      },
+      legend: { position: 'bottom' },
+      title: { display: true, text: 'Boys (n=25) — Girls similar distribution', font: { family: 'Inter', size: 12 }, color: '#6B7494' }
+    }
+  }
+});
+
+// ══════════════════════════════════════════
+// ACADEMIC CHARTS
+// ══════════════════════════════════════════
+
+// Grade Distribution
+new Chart(document.getElementById('chartGradeDistribution'), {
+  type: 'bar',
+  data: {
+    labels: ['30–39%', '40–49%', '50–59%', '60–69%', '70–79%', '80%+'],
+    datasets: [
+      { label: 'Boys (n=25)', data: [4, 11, 5, 2, 2, 1], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls (n=20)', data: [1, 4, 7, 3, 4, 1], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 11, weight: 600 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, title: { display: true, text: 'Number of Students', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Educational Aspirations
+new Chart(document.getElementById('chartAspirations'), {
+  type: 'bar',
+  data: {
+    labels: ['Matric\n(Gr.10)', 'Intermediate\n(Gr.12)', 'Bachelors', 'Masters', 'Professional\nDegree'],
+    datasets: [
+      { label: 'Boys (n=25)', data: [3, 8, 2, 7, 5], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls (n=20)', data: [1, 2, 0, 4, 13], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 11, weight: 700 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, title: { display: true, text: 'Number of Students', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Absence Days
+new Chart(document.getElementById('chartAbsence'), {
+  type: 'bar',
+  data: {
+    labels: ['Boys', 'Girls'],
+    datasets: [{
+      label: 'Avg Absence Days',
+      data: [1.9, 3.4],
+      backgroundColor: [NAVY, RED],
+      borderRadius: 8, borderSkipped: false
+    }]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 14, weight: 700 },
+        formatter: v => v + ' days'
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0, max: 5, title: { display: true, text: 'Average Days Absent', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Performance Bands
+new Chart(document.getElementById('chartPerfBands'), {
+  type: 'bar',
+  data: {
+    labels: ['Below 45%', '45–59%', '60–74%', '75% +'],
+    datasets: [
+      { label: 'Boys', data: [15, 5, 4, 1], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls', data: [5, 7, 7, 1], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 11, weight: 700 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, title: { display: true, text: 'Number of Students', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// ══════════════════════════════════════════
+// SAFETY CHARTS
+// ══════════════════════════════════════════
+
+// Safety Detail Stacked
+new Chart(document.getElementById('chartSafetyDetail'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Commute — Boys', 'Commute — Girls',
+      'School Area — Boys', 'School Area — Girls',
+      'Home Area — Boys', 'Home Area — Girls'
+    ],
+    datasets: [
+      { label: '1 — Not Safe', data: [1,1, 3,0, 3,0], backgroundColor: '#E8192C', borderSkipped: false },
+      { label: '2 — Not Very Safe', data: [3,6, 5,6, 1,2], backgroundColor: '#F59E0B', borderSkipped: false },
+      { label: '3 — Somewhat Safe', data: [12,8, 9,6, 4,11], backgroundColor: '#0891B2', borderSkipped: false },
+      { label: '4 — Very Safe', data: [9,5, 8,8, 17,7], backgroundColor: '#2D3450', borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    indexAxis: 'y',
+    plugins: { ...defaults.plugins, datalabels: { display: false } },
+    scales: {
+      x: { stacked: true, ...defaults.scales.x, max: 25, title: { display: true, text: 'Number of Students', font: { family: 'Inter', size: 11 } } },
+      y: { stacked: true, ticks: { font: { family: 'Inter', size: 11 }, color: '#475569' }, grid: { display: false } }
+    }
+  }
+});
+
+// Transport Mode
+new Chart(document.getElementById('chartTransport'), {
+  type: 'bar',
+  data: {
+    labels: ['Walking', 'Vehicle\n(Van/Car/Motorcycle)', 'Other'],
+    datasets: [
+      { label: 'Boys (n=25)', data: [15, 9, 1], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls (n=20)', data: [15, 5, 0], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 12, weight: 700 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, title: { display: true, text: 'Number of Students', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Travel Time
+new Chart(document.getElementById('chartTravelTime'), {
+  type: 'bar',
+  data: {
+    labels: ['Boys', 'Girls'],
+    datasets: [{
+      label: 'Avg Travel Time (minutes)',
+      data: [14.9, 11.1],
+      backgroundColor: [NAVY, RED],
+      borderRadius: 8, borderSkipped: false
+    }]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 14, weight: 700 },
+        formatter: v => v + ' min'
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0, max: 20, title: { display: true, text: 'Minutes', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Behavior Modifications (girls)
+new Chart(document.getElementById('chartBehaviorMods'), {
+  type: 'bar',
+  data: {
+    labels: ['Changed\nRoute', 'Changed\nTiming', 'Changed\nClothing', 'Identifies\nEscape Route'],
+    datasets: [
+      { label: 'Always', data: [2, 5, 6, 3], backgroundColor: '#E8192C', borderRadius: [4,4,0,0], borderSkipped: false },
+      { label: 'Sometimes', data: [11, 8, 10, 8], backgroundColor: '#F59E0B', borderRadius: [4,4,0,0], borderSkipped: false },
+      { label: 'Rarely', data: [0, 1, 1, 0], backgroundColor: '#0891B2', borderRadius: [4,4,0,0], borderSkipped: false },
+      { label: 'Never', data: [7, 6, 3, 9], backgroundColor: '#2D3450', borderRadius: [4,4,0,0], borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: { ...defaults.plugins, datalabels: { display: false } },
+    scales: {
+      x: { stacked: true, ...defaults.scales.x },
+      y: { stacked: true, ...defaults.scales.y, max: 20, title: { display: true, text: 'Girls (n=20)', font: { family: 'Inter', size: 11 } } }
+    }
+  }
+});
+
+// ══════════════════════════════════════════
+// GENDER NORMS CHARTS
+// ══════════════════════════════════════════
+
+// Gender Norms Mean
+new Chart(document.getElementById('chartGenderNorms'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Girls: Focus\non Household', 'Education\nEqually Valued', 'Mothers\nWorking OK', 'Men Must\nProtect Women'
+    ],
+    datasets: [
+      { label: 'Boys', data: [3.16, 4.12, 2.44, 4.48], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls', data: [3.40, 2.75, 2.85, 4.60], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 11, weight: 700 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0, max: 6, title: { display: true, text: 'Mean Score (1–5)', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Gender Norms Detail Stacked
+new Chart(document.getElementById('chartGenderNormsDetail'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'G2 Boys', 'G2 Girls',
+      'G3 Boys', 'G3 Girls',
+      'G5 Boys', 'G5 Girls',
+      'G6 Boys', 'G6 Girls'
+    ],
+    datasets: [
+      { label: 'Strongly Disagree (1)', data: [6,1, 1,2, 4,5, 0,0], backgroundColor: '#0891B2' },
+      { label: 'Disagree (2)', data: [3,7, 1,9, 15,5, 1,0], backgroundColor: '#67E8F9' },
+      { label: 'Neutral (3)', data: [1,1, 0,3, 0,2, 0,0], backgroundColor: '#E2E8F0' },
+      { label: 'Agree (4)', data: [11,5, 15,4, 3,4, 10,8], backgroundColor: '#F59E0B' },
+      { label: 'Strongly Agree (5)', data: [4,6, 8,2, 3,4, 14,12], backgroundColor: '#E8192C' }
+    ]
+  },
+  options: {
+    ...defaults,
+    indexAxis: 'y',
+    plugins: { ...defaults.plugins, datalabels: { display: false } },
+    scales: {
+      x: { stacked: true, ...defaults.scales.x, title: { display: true, text: 'Number of Students', font: { family: 'Inter', size: 11 } } },
+      y: { stacked: true, ticks: { font: { family: 'Inter', size: 11 } }, grid: { display: false } }
+    }
+  }
+});
+
+// Harassment Witnessing
+new Chart(document.getElementById('chartHarassWitness'), {
+  type: 'bar',
+  data: {
+    labels: ['Physical Harassment\n(Witnessed)', 'Verbal Harassment\n(Witnessed)'],
+    datasets: [
+      { label: 'Boys — Yes (witnessed)', data: [6, 11], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls — Yes (witnessed)', data: [5, 14], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 13, weight: 700 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, max: 25, title: { display: true, text: 'Number of Students Saying "Yes"', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Blame Attribution
+new Chart(document.getElementById('chartBlame'), {
+  type: 'bar',
+  data: {
+    labels: ['1 — Victim\'s\nFault', '2 — More Victim\nThan Perp.', '3 — Both\nEqually', '4 — More Perp.\nThan Victim', '5 — Perp.\nFully at Fault'],
+    datasets: [
+      { label: 'Boys (n=25)', data: [12, 0, 7, 5, 1], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls (n=20)', data: [4, 1, 10, 4, 1], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 11, weight: 700 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, title: { display: true, text: 'Number of Students', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// ══════════════════════════════════════════
+// WELLBEING CHARTS
+// ══════════════════════════════════════════
+
+// PQL Means
+new Chart(document.getElementById('chartPQL'), {
+  type: 'bar',
+  data: {
+    labels: ['PQL2\nMood/Feelings', 'PQL3\nSchool/Learning', 'PQL5\nFriendships', 'PQL6\nFamily', 'PQL15\nOverall Life'],
+    datasets: [
+      { label: 'Boys', data: [3.84, 4.32, 3.92, 4.48, 4.12], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls', data: [3.65, 4.10, 4.20, 4.25, 4.15], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 11, weight: 700 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0, max: 5.5, title: { display: true, text: 'Mean Score (1–5)', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Self-Efficacy
+new Chart(document.getElementById('chartSelfEfficacy'), {
+  type: 'bar',
+  data: {
+    labels: ['SE1: Can Handle\nChallenges', 'SE2: Can Find\nSolutions', 'SE3: Stay Calm\nUnder Pressure'],
+    datasets: [
+      { label: 'Boys', data: [2.04, 2.44, 2.28], backgroundColor: NAVY, borderRadius: 6, borderSkipped: false },
+      { label: 'Girls', data: [2.45, 2.80, 2.25], backgroundColor: RED,  borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 12, weight: 700 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0, max: 3.5, title: { display: true, text: 'Mean Score (1–3)', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// PQL Girls Distribution
+new Chart(document.getElementById('chartPQLGirls'), {
+  type: 'bar',
+  data: {
+    labels: ['PQL2\nMood', 'PQL3\nLearning', 'PQL5\nFriendships', 'PQL6\nFamily', 'PQL15\nOverall'],
+    datasets: [
+      { label: 'Never (1)', data: [0,0,0,0,0], backgroundColor: '#E8192C' },
+      { label: 'Almost Never (2)', data: [1,0,0,0,0], backgroundColor: '#F59E0B' },
+      { label: 'Sometimes (3)', data: [8,5,3,3,5], backgroundColor: '#E2E8F0' },
+      { label: 'Often (4)', data: [8,8,10,9,7], backgroundColor: '#0891B2' },
+      { label: 'Almost Always (5)', data: [3,7,7,8,8], backgroundColor: '#2D3450' }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: { ...defaults.plugins, datalabels: { display: false } },
+    scales: {
+      x: { stacked: true, ...defaults.scales.x },
+      y: { stacked: true, ...defaults.scales.y, max: 22, title: { display: true, text: 'Girls (n=20)', font: { family: 'Inter', size: 11 } } }
+    }
+  }
+});
+
+// PQL Boys Distribution
+new Chart(document.getElementById('chartPQLBoys'), {
+  type: 'bar',
+  data: {
+    labels: ['PQL2\nMood', 'PQL3\nLearning', 'PQL5\nFriendships', 'PQL6\nFamily', 'PQL15\nOverall'],
+    datasets: [
+      { label: 'Never (1)', data: [0,0,2,0,0], backgroundColor: '#E8192C' },
+      { label: 'Almost Never (2)', data: [1,0,0,0,1], backgroundColor: '#F59E0B' },
+      { label: 'Sometimes (3)', data: [6,2,3,1,6], backgroundColor: '#E2E8F0' },
+      { label: 'Often (4)', data: [14,13,13,11,7], backgroundColor: '#0891B2' },
+      { label: 'Almost Always (5)', data: [4,10,7,13,11], backgroundColor: '#2D3450' }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: { ...defaults.plugins, datalabels: { display: false } },
+    scales: {
+      x: { stacked: true, ...defaults.scales.x },
+      y: { stacked: true, ...defaults.scales.y, max: 27, title: { display: true, text: 'Boys (n=25)', font: { family: 'Inter', size: 11 } } }
+    }
+  }
+});
+
+// ══════════════════════════════════════════
+// BOYS' MODULE CHARTS
+// ══════════════════════════════════════════
+
+// Masculinity Norms
+new Chart(document.getElementById('chartMasculinity'), {
+  type: 'bar',
+  data: {
+    labels: ['M1: Men Do\nRepairs', 'M2: Men Don\'t\nAsk Help', 'M3: Men Don\'t\nShow Fear', 'M4: Must Win\nGames', 'M5: Must Tease\nto Fit In'],
+    datasets: [{
+      label: 'Mean Score (Boys, n=25)',
+      data: [3.52, 3.20, 3.52, 3.36, 1.56],
+      backgroundColor: [NAVY, NAVY, AMBER, AMBER, TEAL],
+      borderRadius: 8, borderSkipped: false
+    }]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 13, weight: 700 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0, max: 5.5, title: { display: true, text: 'Mean Agreement (1–5)', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Masculinity Detail Stacked
+new Chart(document.getElementById('chartMascDetail'), {
+  type: 'bar',
+  data: {
+    labels: ['M1: Men Do Repairs', 'M2: Don\'t Ask Help', 'M3: Hide Fear', 'M4: Must Win', 'M5: Tease to Fit In'],
+    datasets: [
+      { label: 'Strongly Disagree (1)', data: [2,2,2,3,14], backgroundColor: '#0891B2' },
+      { label: 'Disagree (2)', data: [5,9,5,7,9], backgroundColor: '#67E8F9' },
+      { label: 'Neutral (3)', data: [0,0,1,0,1], backgroundColor: '#E2E8F0' },
+      { label: 'Agree (4)', data: [14,10,12,8,1], backgroundColor: '#F59E0B' },
+      { label: 'Strongly Agree (5)', data: [4,4,5,7,0], backgroundColor: '#E8192C' }
+    ]
+  },
+  options: {
+    ...defaults,
+    indexAxis: 'y',
+    plugins: { ...defaults.plugins, datalabels: { display: false } },
+    scales: {
+      x: { stacked: true, ...defaults.scales.x, max: 30, title: { display: true, text: 'Number of Boys', font: { family: 'Inter', size: 11 } } },
+      y: { stacked: true, ticks: { font: { family: 'Inter', size: 11 } }, grid: { display: false } }
+    }
+  }
+});
+
+// Impulse Control
+new Chart(document.getElementById('chartImpulse'), {
+  type: 'bar',
+  data: {
+    labels: ['I1', 'I2', 'I3', 'I4', 'I5', 'I6', 'I7', 'I8'],
+    datasets: [{
+      label: 'Mean Score',
+      data: [3.04, 3.00, 2.88, 2.56, 2.04, 2.28, 2.60, 4.64],
+      backgroundColor: [NAVY, NAVY, NAVY, AMBER, RED, RED, AMBER, TEAL],
+      borderRadius: 6, borderSkipped: false
+    }]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 11, weight: 700 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0, max: 5.5, title: { display: true, text: 'Mean Score (1=Never, 5=Always)', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// CBT & Peer Pressure
+new Chart(document.getElementById('chartCBTPeer'), {
+  type: 'bar',
+  data: {
+    labels: ['CBT1', 'CBT2', 'CBT3', 'Peer 1', 'Peer 2', 'Peer 3'],
+    datasets: [{
+      label: 'Mean Score',
+      data: [2.48, 2.08, 2.20, 2.20, 2.12, 2.40],
+      backgroundColor: [PURPLE, PURPLE, PURPLE, AMBER, AMBER, AMBER],
+      borderRadius: 6, borderSkipped: false
+    }]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 12, weight: 700 }
+      }
+    },
+    scales: {
+      ...defaults.scales,
+      y: { ...defaults.scales.y, min: 0, max: 4.5, title: { display: true, text: 'Mean Score', font: { family: 'Inter', size: 11 } } }
+    }
+  }
+});
+
+// ══════════════════════════════════════════
+// GIRLS' MODULE CHARTS
+// ══════════════════════════════════════════
+
+// Time Use
+new Chart(document.getElementById('chartTimeUse'), {
+  type: 'bar',
+  data: {
+    labels: ['Fetching\nWater', 'Cooking', 'Cleaning', 'Caring\n(Children/Elderly)', 'Business\n/ Work'],
+    datasets: [{
+      label: 'Avg Daily Hours',
+      data: [1.4, 2.0, 3.0, 3.2, 1.9],
+      backgroundColor: [TEAL, AMBER, RED, NAVY, PURPLE],
+      borderRadius: 8, borderSkipped: false
+    }]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 13, weight: 700 },
+        formatter: v => v + 'h'
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0, max: 5, title: { display: true, text: 'Average Hours per Day (Girls, n=20)', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Girls Behavior Modifications Doughnut
+new Chart(document.getElementById('chartGirlsBehavior'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Always Change Clothing (30%)', 'Sometimes Change Clothing (50%)', 'Rarely (5%)', 'Never Change (15%)'],
+    datasets: [{
+      data: [6, 10, 1, 3],
+      backgroundColor: [RED, AMBER, TEAL, NAVY],
+      borderWidth: 3, borderColor: '#fff'
+    }]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, color: '#fff',
+        font: { family: 'Inter', size: 12, weight: 700 },
+        formatter: (v, ctx) => v > 0 ? v : ''
+      },
+      legend: { position: 'bottom', labels: { font: { family: 'Inter', size: 11 }, padding: 10 } },
+      title: { display: true, text: 'Clothing Modification (n=20 girls)', font: { family: 'Inter', size: 12 }, color: '#6B7494' }
+    }
+  }
+});
+
+// Harassment Share
+new Chart(document.getElementById('chartHarassShare'), {
+  type: 'bar',
+  data: {
+    labels: ['Would Tell\nNo One', 'Would Tell\nFriend/Sibling', 'Would Tell\nParent/Family'],
+    datasets: [{
+      label: 'Girls Who Would Tell (n=20)',
+      data: [1, 13, 6],
+      backgroundColor: [RED, TEAL, NAVY],
+      borderRadius: 8, borderSkipped: false
+    }]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 14, weight: 700 }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, max: 18, title: { display: true, text: 'Number of Girls', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+// Harassment by Gender (witnessed verbal)
+new Chart(document.getElementById('chartHarassGender'), {
+  type: 'bar',
+  data: {
+    labels: ['Boys', 'Girls'],
+    datasets: [
+      { label: 'Witnessed Verbal Harassment', data: [11, 14], backgroundColor: [NAVY, RED], borderRadius: 8, borderSkipped: false }
+    ]
+  },
+  options: {
+    ...defaults,
+    plugins: {
+      ...defaults.plugins,
+      datalabels: {
+        display: true, anchor: 'end', align: 'end',
+        color: '#334155', font: { family: 'Inter', size: 14, weight: 700 },
+        formatter: (v, ctx) => {
+          const totals = [25, 20];
+          return v + ' / ' + totals[ctx.dataIndex] + ' (' + Math.round(v/totals[ctx.dataIndex]*100) + '%)';
+        }
+      }
+    },
+    scales: { ...defaults.scales, y: { ...defaults.scales.y, max: 22, title: { display: true, text: 'Number of Students', font: { family: 'Inter', size: 11 } } } }
+  }
+});
+
+</script>
+</body>
+</html>
