@@ -390,6 +390,7 @@
   </div>
 </div>
 
+<div id="site-content" style="display:none">
 <!-- ════════════════════ HEADER -->
 <div class="header">
   <div class="header-inner">
@@ -1061,35 +1062,25 @@
   <strong>www.rs.org.pk</strong> &nbsp;·&nbsp;
   Data collected April 2026 &nbsp;·&nbsp; Pakistan Urban Schools
 </div>
+</div><!-- /site-content -->
 
 <script>
 // ══════════════════════════════════════════
 // PASSWORD GATE
 // ══════════════════════════════════════════
-const PASSWORD    = 'UHS@RS2026';
-const SESSION_KEY = 'uhs_auth';
-
-function unlock() {
-  document.getElementById('auth-gate').style.display = 'none';
-  sessionStorage.setItem(SESSION_KEY, '1');
-}
-
 function checkAuth() {
-  var inp = document.getElementById('auth-pw');
+  var pw  = document.getElementById('auth-pw').value;
   var err = document.getElementById('auth-error');
-  if (inp.value === PASSWORD) {
-    inp.classList.remove('error');
+  if (pw === 'UHS@RS2026') {
+    document.getElementById('auth-gate').style.display    = 'none';
+    document.getElementById('site-content').style.display = 'block';
     err.textContent = '';
-    unlock();
   } else {
-    inp.classList.add('error');
     err.textContent = 'Incorrect password. Please try again.';
-    inp.value = '';
-    inp.focus();
+    document.getElementById('auth-pw').value = '';
+    document.getElementById('auth-pw').focus();
   }
 }
-
-if (sessionStorage.getItem(SESSION_KEY) === '1') { unlock(); }
 
 // ── Panel Navigation
 function showPanel(id, btn) {
