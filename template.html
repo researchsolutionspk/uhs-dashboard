@@ -3,9 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-  <meta http-equiv="Pragma" content="no-cache" />
-  <meta http-equiv="Expires" content="0" />
   <title>Empowering Girls — Endline Survey Dashboard — Research Solutions</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -417,7 +414,7 @@
       <div class="header-meta">
         <strong>Pakistan · Urban Schools</strong><br>
         Field Collection: April 2026<br>
-        <span class="header-pill">45 Students · 2 Schools · Grade 8</span>
+        <span class="header-pill">{n_total} Students · 2 Schools · Grade 8</span>
       </div>
     </div>
     <nav class="nav-tabs" id="navTabs">
@@ -461,19 +458,19 @@
       </div>
       <div class="kpi-card">
         <div class="kpi-icon">🎒</div>
-        <div class="kpi-value">45</div>
+        <div class="kpi-value">{n_total}</div>
         <div class="kpi-label">Total Students</div>
         <div class="kpi-delta up">100% Grade 8</div>
       </div>
       <div class="kpi-card teal">
         <div class="kpi-icon">👧</div>
-        <div class="kpi-value">20</div>
+        <div class="kpi-value">{n_girls}</div>
         <div class="kpi-label">Girls Surveyed</div>
         <div class="kpi-delta up">Avg Age 13.6 yrs</div>
       </div>
       <div class="kpi-card amber">
         <div class="kpi-icon">👦</div>
-        <div class="kpi-value">25</div>
+        <div class="kpi-value">{n_boys}</div>
         <div class="kpi-label">Boys Surveyed</div>
         <div class="kpi-delta neutral">Avg Age 14.0 yrs</div>
       </div>
@@ -525,7 +522,7 @@
     <div class="chart-grid cols-2">
       <div class="chart-card">
         <h3>Sample Composition — Boys vs Girls</h3>
-        <div class="chart-desc">Endline survey respondents by gender (n=45)</div>
+        <div class="chart-desc">Endline survey respondents by gender (n={n_total})</div>
         <div class="chart-wrap"><canvas id="chartGenderSplit"></canvas></div>
       </div>
       <div class="chart-card">

@@ -741,6 +741,13 @@ if "// %%CHART_BLOCK%%" not in template_text:
 
 output_text = template_text.replace("// %%CHART_BLOCK%%", js)
 
+# Substitute KPI placeholders in the Overview section
+output_text = (output_text
+    .replace("{n_total}", str(n_total))
+    .replace("{n_boys}",  str(n_boys))
+    .replace("{n_girls}", str(n_girls))
+)
+
 # Update last-updated timestamp in the footer line
 output_text = output_text.replace(
     "Data collected April 2026 &nbsp;·&nbsp; Pakistan Urban Schools",
