@@ -88,6 +88,17 @@ girls_age_mean = mean_of(girls, "age")
 boys_sib_mean  = mean_of(boys,  "siblings")
 girls_sib_mean = mean_of(girls, "siblings")
 
+def _minmax(rows, key):
+    vals = [sf(r.get(key, "")) for r in rows]
+    vals = [v for v in vals if v is not None]
+    return (int(min(vals)), int(max(vals))) if vals else (0, 0)
+boys_age_min,  boys_age_max  = _minmax(boys,  "age")
+girls_age_min, girls_age_max = _minmax(girls, "age")
+
+# Home ownership — asset_7 = House/apartment
+boys_home_own_pct  = pct(count_val(boys,  "asset_7", 1), n_boys)
+girls_home_own_pct = pct(count_val(girls, "asset_7", 1), n_girls)
+
 # ── ACADEMIC ───────────────────────────────────────────────────────────────
 bg = [sf(r.get("percentage_grade7","")) for r in boys  if sf(r.get("percentage_grade7","")) is not None]
 gg = [sf(r.get("percentage_grade7","")) for r in girls if sf(r.get("percentage_grade7","")) is not None]
@@ -115,6 +126,8 @@ girls_abs_mean = round(sum(ga_vals)/len(ga_vals),1) if ga_vals else 0
 boys_asp  = count_vals(boys,  "highest_edu", [3,4,5,6,7])
 girls_asp = count_vals(girls, "highest_edu", [3,4,5,6,7])
 girls_asp_pro_pct = pct(count_val(girls, "highest_edu", 7), n_girls)
+boys_asp_pro_pct  = pct(count_val(boys,  "highest_edu", 7), n_boys)
+grade_gap = round(girls_grade_mean - boys_grade_mean, 1)
 
 # ── SAFETY ─────────────────────────────────────────────────────────────────
 boys_commute_mean  = mean_of(boys,  "safe_commuting_school")
@@ -137,6 +150,10 @@ girls_timing   = count_vals(girls, "time_changed",     [1,2,3,4])
 girls_clothing = count_vals(girls, "clothing_changed", [1,2,3,4])
 girls_escape   = count_vals(girls, "identify_escape",  [1,2,3,4])
 girls_clothing_mod_pct = pct(girls_clothing[0]+girls_clothing[1], n_girls)
+girls_route_mod_pct    = pct(girls_route[0]+girls_route[1],       n_girls)
+girls_timing_mod_pct   = pct(girls_timing[0]+girls_timing[1],     n_girls)
+girls_clothing_mod_n   = girls_clothing[0] + girls_clothing[1]
+girls_escape_pct       = pct(girls_escape[0]+girls_escape[1],     n_girls)
 
 # ── MOBILITY ───────────────────────────────────────────────────────────────
 boys_transport    = count_vals(boys,  "school_transport", [1,2,3])
@@ -154,6 +171,16 @@ boys_father_occ  = count_vals(boys,  "occupation_father", [1,2,3,4,10,88])
 girls_father_occ = count_vals(girls, "occupation_father", [1,2,3,4,10,88])
 boys_mother_occ  = count_vals(boys,  "occupation_mother", [1,2,3,8,99])
 girls_mother_occ = count_vals(girls, "occupation_mother", [1,2,3,8,99])
+
+# Father education — Intermediate = code 5 (modal); codes 1,2 = no/primary only
+boys_father_inter_pct  = pct(count_val(boys,  "father_edu", 5), n_boys)
+girls_father_inter_pct = pct(count_val(girls, "father_edu", 5), n_girls)
+boys_father_lowed_pct  = pct(count_val(boys,  "father_edu", 1) + count_val(boys,  "father_edu", 2), n_boys)
+girls_father_lowed_pct = pct(count_val(girls, "father_edu", 1) + count_val(girls, "father_edu", 2), n_girls)
+
+# Mother homemaker — occupation_mother code 8
+boys_mother_home_pct  = pct(count_val(boys,  "occupation_mother", 8), n_boys)
+girls_mother_home_pct = pct(count_val(girls, "occupation_mother", 8), n_girls)
 
 # ── ASSETS ─────────────────────────────────────────────────────────────────
 asset_vars = [f"asset_{i}" for i in [1,2,3,4,5,6,7,8,9,11,12,13,14]]
@@ -200,6 +227,9 @@ girls_verbal_pct = pct(girls_verbal_witness, n_girls)
 
 boys_blame  = count_vals(boys,  "touch_fault", [1,2,3,4,5])
 girls_blame = count_vals(girls, "touch_fault", [1,2,3,4,5])
+# Strong perpetrator attribution = code 5 (strongly agree perpetrator at fault)
+boys_blame_perp_pct  = pct(boys_blame[4],  n_boys)
+girls_blame_perp_pct = pct(girls_blame[4], n_girls)
 
 # ── MASCULINITY NORMS ──────────────────────────────────────────────────────
 masc_vars = [f"masculinity_{i}" for i in range(1,6)]
@@ -224,6 +254,9 @@ girls_share_friend = count_val(girls, "harassment_share_3", 1)
 girls_share_parent = count_val(girls, "harassment_share_2", 1)
 girls_report       = count_val(girls, "harassment_report",  1)
 girls_report_pct   = pct(girls_report, n_girls)
+girls_share_nobody_pct = pct(girls_share_nobody, n_girls)
+girls_share_friend_pct = pct(girls_share_friend, n_girls)
+girls_share_parent_pct = pct(girls_share_parent, n_girls)
 
 # ── RADAR SCORES (0-100) ───────────────────────────────────────────────────
 boys_radar = [
@@ -746,12 +779,58 @@ if "// %%CHART_BLOCK%%" not in template_text:
 output_text = template_text.replace("// %%CHART_BLOCK%%", js)
 
 # Substitute KPI placeholders in the Overview section
-output_text = (output_text
-    .replace("{n_total}",   str(n_total))
-    .replace("{n_boys}",    str(n_boys))
-    .replace("{n_girls}",   str(n_girls))
-    .replace("{n_schools}", str(n_schools))
-)
+subs = {
+    "{n_total}":   n_total,   "{n_boys}":    n_boys,    "{n_girls}":   n_girls,   "{n_schools}": n_schools,
+    "{boys_age_mean}":  boys_age_mean,  "{girls_age_mean}": girls_age_mean,
+    "{boys_age_min}":   boys_age_min,   "{boys_age_max}":   boys_age_max,
+    "{girls_age_min}":  girls_age_min,  "{girls_age_max}":  girls_age_max,
+    "{boys_sib_mean}":  boys_sib_mean,  "{girls_sib_mean}": girls_sib_mean,
+    "{boys_home_own_pct}":  boys_home_own_pct,  "{girls_home_own_pct}": girls_home_own_pct,
+    "{boys_grade_mean}":    boys_grade_mean,    "{girls_grade_mean}":   girls_grade_mean,
+    "{boys_grade_min}":     boys_grade_min,     "{boys_grade_max}":     boys_grade_max,
+    "{girls_grade_min}":    girls_grade_min,    "{girls_grade_max}":    girls_grade_max,
+    "{grade_gap}":          abs(grade_gap),
+    "{grade_leader}":       "Boys" if boys_grade_mean >= girls_grade_mean else "Girls",
+    "{grade_trailer}":      "girls" if boys_grade_mean >= girls_grade_mean else "boys",
+    "{boys_abs_mean}":      boys_abs_mean,      "{girls_abs_mean}":     girls_abs_mean,
+    "{boys_asp_pro_pct}":   boys_asp_pro_pct,   "{girls_asp_pro_pct}":  girls_asp_pro_pct,
+    "{boys_commute_mean}":  boys_commute_mean,  "{girls_commute_mean}": girls_commute_mean,
+    "{boys_school_mean}":   boys_school_mean,   "{girls_school_mean}":  girls_school_mean,
+    "{boys_home_mean}":     boys_home_mean,     "{girls_home_mean}":    girls_home_mean,
+    "{girls_clothing_mod_pct}": girls_clothing_mod_pct,
+    "{girls_route_mod_pct}":    girls_route_mod_pct,
+    "{girls_timing_mod_pct}":   girls_timing_mod_pct,
+    "{girls_clothing_mod_n}":   girls_clothing_mod_n,
+    "{girls_escape_pct}":       girls_escape_pct,
+    "{boys_verbal_pct}":    boys_verbal_pct,    "{girls_verbal_pct}":   girls_verbal_pct,
+    "{boys_blame_perp_pct}": boys_blame_perp_pct, "{girls_blame_perp_pct}": girls_blame_perp_pct,
+    "{boys_pql_overall}":   boys_pql_overall,   "{girls_pql_overall}":  girls_pql_overall,
+    "{boys_pql_family}":    boys_pql_means[1],  "{girls_pql_family}":   girls_pql_means[1],
+    "{boys_pql_friend}":    boys_pql_means[2],  "{girls_pql_friend}":   girls_pql_means[2],
+    "{boys_se_1}": boys_se_means[0], "{boys_se_2}": boys_se_means[1], "{boys_se_3}": boys_se_means[2],
+    "{girls_se_1}": girls_se_means[0], "{girls_se_2}": girls_se_means[1], "{girls_se_3}": girls_se_means[2],
+    "{boys_gn_household}": boys_gn_means[0], "{girls_gn_household}": girls_gn_means[0],
+    "{boys_gn_protect}":   boys_gn_means[3], "{girls_gn_protect}":   girls_gn_means[3],
+    "{masc_1}": masc_means[0], "{masc_2}": masc_means[1], "{masc_3}": masc_means[2], "{masc_4}": masc_means[3], "{masc_5}": masc_means[4],
+    "{masc_1_pct}": round(masc_means[0]/5*100, 1),
+    "{masc_2_pct}": round(masc_means[1]/5*100, 1),
+    "{masc_3_pct}": round(masc_means[2]/5*100, 1),
+    "{masc_4_pct}": round(masc_means[3]/5*100, 1),
+    "{masc_5_pct}": round(masc_means[4]/5*100, 1),
+    "{impulse_8}": impulse_means[7],
+    "{peer_1}":    peer_means[0],
+    "{time_cooking}": girls_time_use[1], "{time_cleaning}": girls_time_use[2], "{time_caring}": girls_time_use[3],
+    "{girls_share_parent_pct}": girls_share_parent_pct,
+    "{girls_share_friend_pct}": girls_share_friend_pct,
+    "{girls_share_nobody_pct}": girls_share_nobody_pct,
+    "{girls_report_pct}":       girls_report_pct,
+    "{girls_report_n}":         girls_report,
+    "{boys_father_inter_pct}":  boys_father_inter_pct,  "{girls_father_inter_pct}": girls_father_inter_pct,
+    "{boys_father_lowed_pct}":  boys_father_lowed_pct,  "{girls_father_lowed_pct}": girls_father_lowed_pct,
+    "{boys_mother_home_pct}":   boys_mother_home_pct,   "{girls_mother_home_pct}":  girls_mother_home_pct,
+}
+for k, v in subs.items():
+    output_text = output_text.replace(k, str(v))
 
 # Update last-updated timestamp in the footer line
 output_text = output_text.replace(

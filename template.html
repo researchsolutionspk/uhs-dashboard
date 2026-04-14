@@ -466,17 +466,17 @@
         <div class="kpi-icon">👧</div>
         <div class="kpi-value">{n_girls}</div>
         <div class="kpi-label">Girls Surveyed</div>
-        <div class="kpi-delta up">Avg Age 13.6 yrs</div>
+        <div class="kpi-delta up">Avg Age {girls_age_mean} yrs</div>
       </div>
       <div class="kpi-card amber">
         <div class="kpi-icon">👦</div>
         <div class="kpi-value">{n_boys}</div>
         <div class="kpi-label">Boys Surveyed</div>
-        <div class="kpi-delta neutral">Avg Age 14.0 yrs</div>
+        <div class="kpi-delta neutral">Avg Age {boys_age_mean} yrs</div>
       </div>
       <div class="kpi-card purple">
         <div class="kpi-icon">🎓</div>
-        <div class="kpi-value">65%</div>
+        <div class="kpi-value">{girls_asp_pro_pct}%</div>
         <div class="kpi-label">Girls Aspire to Professions</div>
         <div class="kpi-delta up">Doctor / Engineer / Lawyer</div>
       </div>
@@ -492,22 +492,22 @@
       <div class="callout teal">
         <div class="callout-icon">📈</div>
         <div class="callout-body">
-          <h4>Girls Outperform Boys Academically</h4>
-          <p>Girls averaged 54.2% in Grade 7 compared to 44.7% for boys — a 9.5 percentage-point gap indicating stronger academic performance among girls.</p>
+          <h4>Academic Performance Comparison</h4>
+          <p>Girls averaged {girls_grade_mean}% in Grade 7 compared to {boys_grade_mean}% for boys — a {grade_gap} percentage-point gap, with {grade_leader} performing better.</p>
         </div>
       </div>
       <div class="callout primary">
         <div class="callout-icon">⚠️</div>
         <div class="callout-body">
           <h4>Girls Report Lower Safety on Commute</h4>
-          <p>Girls rate commuting to school as less safe (2.85/4) compared to boys (3.16/4), reflecting gendered safety disparities in the school journey.</p>
+          <p>Girls rate commuting to school as less safe ({girls_commute_mean}/4) compared to boys ({boys_commute_mean}/4), reflecting gendered safety disparities in the school journey.</p>
         </div>
       </div>
       <div class="callout amber">
         <div class="callout-icon">👗</div>
         <div class="callout-body">
-          <h4>80% of Girls Modify Behaviour</h4>
-          <p>16 out of 20 girls report sometimes or always changing their clothing due to safety concerns in their neighbourhood or on route to school.</p>
+          <h4>{girls_clothing_mod_pct}% of Girls Modify Behaviour</h4>
+          <p>{girls_clothing_mod_n} out of {n_girls} girls report sometimes or always changing their clothing due to safety concerns in their neighbourhood or on route to school.</p>
         </div>
       </div>
       <div class="callout purple">
@@ -564,10 +564,10 @@
     </div>
 
     <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-icon">🎂</div><div class="kpi-value">14.0</div><div class="kpi-label">Boys' Avg Age (Years)</div><div class="kpi-delta navy">Range: 11–16 yrs</div></div>
-      <div class="kpi-card teal"><div class="kpi-icon">🎂</div><div class="kpi-value">13.6</div><div class="kpi-label">Girls' Avg Age (Years)</div><div class="kpi-delta navy">Range: 13–15 yrs</div></div>
-      <div class="kpi-card amber"><div class="kpi-icon">👨‍👩‍👦‍👦</div><div class="kpi-value">4.9</div><div class="kpi-label">Boys' Avg Siblings</div><div class="kpi-delta neutral">Girls avg: 4.5 siblings</div></div>
-      <div class="kpi-card navy"><div class="kpi-icon">🏠</div><div class="kpi-value">100%</div><div class="kpi-label">Boys Own Their Home</div><div class="kpi-delta up">Girls: 95%</div></div>
+      <div class="kpi-card"><div class="kpi-icon">🎂</div><div class="kpi-value">{boys_age_mean}</div><div class="kpi-label">Boys' Avg Age (Years)</div><div class="kpi-delta navy">Range: {boys_age_min}–{boys_age_max} yrs</div></div>
+      <div class="kpi-card teal"><div class="kpi-icon">🎂</div><div class="kpi-value">{girls_age_mean}</div><div class="kpi-label">Girls' Avg Age (Years)</div><div class="kpi-delta navy">Range: {girls_age_min}–{girls_age_max} yrs</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">👨‍👩‍👦‍👦</div><div class="kpi-value">{boys_sib_mean}</div><div class="kpi-label">Boys' Avg Siblings</div><div class="kpi-delta neutral">Girls avg: {girls_sib_mean} siblings</div></div>
+      <div class="kpi-card navy"><div class="kpi-icon">🏠</div><div class="kpi-value">{boys_home_own_pct}%</div><div class="kpi-label">Boys Own Their Home</div><div class="kpi-delta up">Girls: {girls_home_own_pct}%</div></div>
     </div>
 
     <div class="chart-grid cols-2">
@@ -611,10 +611,10 @@
 
     <div class="insight-row">
       <div class="insight-box navy">
-        <strong>Father's Education:</strong> Intermediate (Grade 12) is the modal education level for fathers of both boys (32%) and girls (40%), suggesting relatively educated household heads. However, 28% of boys' fathers and 20% of girls' fathers have no or primary-only education.
+        <strong>Father's Education:</strong> {boys_father_inter_pct}% of boys' fathers and {girls_father_inter_pct}% of girls' fathers completed Intermediate (Grade 12). Meanwhile, {boys_father_lowed_pct}% of boys' fathers and {girls_father_lowed_pct}% of girls' fathers have no schooling or primary-only education.
       </div>
       <div class="insight-box teal">
-        <strong>Mother's Employment:</strong> 60% of boys' mothers are full-time homemakers, compared to just 30% of girls' mothers — suggesting girls in this sample come from households with more economically active mothers, which may influence gender norm exposure.
+        <strong>Mother's Employment:</strong> {boys_mother_home_pct}% of boys' mothers are full-time homemakers, compared to {girls_mother_home_pct}% of girls' mothers — indicating differing levels of maternal economic activity across the two sub-samples, which may influence gender norm exposure.
       </div>
     </div>
     <p class="footnote">Education levels: 1=None/Primary, 2=Middle (Grades 6–8), 3=Matric (Grade 10), 4=Intermediate (Grade 12), 5=Bachelors, 6=Masters/Post-Graduate. Occupation codes: 1=Government Employee, 2=Private Employee, 3=Self-Employed/Business, 8=Homemaker.</p>
@@ -631,10 +631,10 @@
     </div>
 
     <div class="kpi-grid">
-      <div class="kpi-card teal"><div class="kpi-icon">📊</div><div class="kpi-value">54.2%</div><div class="kpi-label">Girls Avg Grade 7 Score</div><div class="kpi-delta up">Range: 37%–82%</div></div>
-      <div class="kpi-card amber"><div class="kpi-icon">📊</div><div class="kpi-value">44.7%</div><div class="kpi-label">Boys Avg Grade 7 Score</div><div class="kpi-delta down">Range: 33%–84%</div></div>
-      <div class="kpi-card navy"><div class="kpi-icon">📅</div><div class="kpi-value">1.9</div><div class="kpi-label">Boys Avg Absence Days</div><div class="kpi-delta neutral">Girls: 3.4 days avg</div></div>
-      <div class="kpi-card purple"><div class="kpi-icon">🎓</div><div class="kpi-value">65%</div><div class="kpi-label">Girls Want Pro. Degree</div><div class="kpi-delta up">vs 20% of boys</div></div>
+      <div class="kpi-card teal"><div class="kpi-icon">📊</div><div class="kpi-value">{girls_grade_mean}%</div><div class="kpi-label">Girls Avg Grade 7 Score</div><div class="kpi-delta up">Range: {girls_grade_min}%–{girls_grade_max}%</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">📊</div><div class="kpi-value">{boys_grade_mean}%</div><div class="kpi-label">Boys Avg Grade 7 Score</div><div class="kpi-delta down">Range: {boys_grade_min}%–{boys_grade_max}%</div></div>
+      <div class="kpi-card navy"><div class="kpi-icon">📅</div><div class="kpi-value">{boys_abs_mean}</div><div class="kpi-label">Boys Avg Absence Days</div><div class="kpi-delta neutral">Girls: {girls_abs_mean} days avg</div></div>
+      <div class="kpi-card purple"><div class="kpi-icon">🎓</div><div class="kpi-value">{girls_asp_pro_pct}%</div><div class="kpi-label">Girls Want Pro. Degree</div><div class="kpi-delta up">vs {boys_asp_pro_pct}% of boys</div></div>
     </div>
 
     <div class="chart-grid cols-2">
@@ -665,10 +665,10 @@
 
     <div class="insight-row">
       <div class="insight-box primary">
-        <strong>Gender Performance Gap:</strong> Girls outperform boys by an average of <strong>9.5 percentage points</strong> in Grade 7 scores (54.2% vs 44.7%). This performance advantage coexists with girls facing greater safety constraints and mobility restrictions — suggesting academic resilience despite structural barriers.
+        <strong>Gender Performance Gap:</strong> The gap between girls ({girls_grade_mean}%) and boys ({boys_grade_mean}%) in Grade 7 scores is <strong>{grade_gap} percentage points</strong>, with {grade_leader} performing better on average. Performance patterns should be interpreted alongside the differing safety and mobility contexts each group faces.
       </div>
       <div class="insight-box purple">
-        <strong>Aspiration Gap:</strong> <strong>65% of girls</strong> aspire to a professional degree (doctor, engineer, lawyer) compared to only <strong>20% of boys</strong>. Boys are more likely to aspire to intermediate-level qualifications. This suggests the Empowering Girls programme may be successfully raising female educational ambitions.
+        <strong>Aspiration Gap:</strong> <strong>{girls_asp_pro_pct}% of girls</strong> aspire to a professional degree (doctor, engineer, lawyer) compared to <strong>{boys_asp_pro_pct}% of boys</strong>. Differences in aspiration levels between boys and girls provide insight into the reach of the Empowering Girls programme's educational ambition messaging.
       </div>
     </div>
 
@@ -688,42 +688,42 @@
     <div class="sensor-grid">
       <div class="sensor-card teal">
         <div class="sensor-icon">🚶</div>
-        <div class="sensor-value">3.16</div>
+        <div class="sensor-value">{boys_commute_mean}</div>
         <div class="sensor-unit">/ 4.0</div>
         <div class="sensor-label">Boys — Commute Safety</div>
         <div class="sensor-status ok">Moderately Safe</div>
       </div>
       <div class="sensor-card red">
         <div class="sensor-icon">🚶‍♀️</div>
-        <div class="sensor-value">2.85</div>
+        <div class="sensor-value">{girls_commute_mean}</div>
         <div class="sensor-unit">/ 4.0</div>
         <div class="sensor-label">Girls — Commute Safety</div>
         <div class="sensor-status warn">Moderate Concern</div>
       </div>
       <div class="sensor-card amber">
         <div class="sensor-icon">🏫</div>
-        <div class="sensor-value">2.88</div>
+        <div class="sensor-value">{boys_school_mean}</div>
         <div class="sensor-unit">/ 4.0</div>
         <div class="sensor-label">Boys — School Neighbourhood</div>
         <div class="sensor-status warn">Moderate Concern</div>
       </div>
       <div class="sensor-card teal">
         <div class="sensor-icon">🏫</div>
-        <div class="sensor-value">3.10</div>
+        <div class="sensor-value">{girls_school_mean}</div>
         <div class="sensor-unit">/ 4.0</div>
         <div class="sensor-label">Girls — School Neighbourhood</div>
         <div class="sensor-status ok">Moderately Safe</div>
       </div>
       <div class="sensor-card">
         <div class="sensor-icon">🏠</div>
-        <div class="sensor-value">3.40</div>
+        <div class="sensor-value">{boys_home_mean}</div>
         <div class="sensor-unit">/ 4.0</div>
         <div class="sensor-label">Boys — Home Area</div>
         <div class="sensor-status ok">Mostly Safe</div>
       </div>
       <div class="sensor-card">
         <div class="sensor-icon">🏠</div>
-        <div class="sensor-value">3.25</div>
+        <div class="sensor-value">{girls_home_mean}</div>
         <div class="sensor-unit">/ 4.0</div>
         <div class="sensor-label">Girls — Home Area</div>
         <div class="sensor-status ok">Moderately Safe</div>
@@ -758,10 +758,10 @@
 
     <div class="insight-row">
       <div class="insight-box primary">
-        <strong>Commute Safety Gap:</strong> Boys rate their commute to school as safer than girls (3.16 vs 2.85 on a 4-point scale). However, girls feel slightly safer in their school neighbourhood (3.10 vs 2.88 for boys), indicating that school areas may benefit from safety initiatives that carry forward into the commute route.
+        <strong>Commute Safety Gap:</strong> Boys rate their commute to school at {boys_commute_mean} vs girls at {girls_commute_mean} on a 4-point scale. In the school neighbourhood the scores are {boys_school_mean} (boys) and {girls_school_mean} (girls). Differences across contexts indicate where safety initiatives may have the greatest impact.
       </div>
       <div class="insight-box amber">
-        <strong>Behavioural Adaptation:</strong> Girls navigate safety concerns through adaptation — <strong>80% sometimes or always change their clothing</strong>, 65% sometimes or always change their timing, and 65% sometimes or always change their route to school. These adaptations represent a significant daily burden and indicator of perceived risk.
+        <strong>Behavioural Adaptation:</strong> Girls navigate safety concerns through adaptation — <strong>{girls_clothing_mod_pct}% sometimes or always change their clothing</strong>, {girls_timing_mod_pct}% sometimes or always change their timing, and {girls_route_mod_pct}% sometimes or always change their route to school. These adaptations represent a significant daily burden and indicator of perceived risk.
       </div>
     </div>
     <p class="footnote">Safety scale: 1=Not safe at all, 2=Not very safe, 3=Somewhat safe, 4=Very safe. Behaviour modification scale: 1=Always, 2=Sometimes, 3=Rarely, 4=Never. Travel times self-reported by students. Boys' school: School #141 (50 students enrolled Grade 7); Girls' school: 35–49 students enrolled.</p>
@@ -778,10 +778,10 @@
     </div>
 
     <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-icon">🏠</div><div class="kpi-value">3.16</div><div class="kpi-label">Boys: Girls Focus on Household</div><div class="kpi-delta neutral">Girls avg: 3.40</div></div>
-      <div class="kpi-card navy"><div class="kpi-icon">🤝</div><div class="kpi-value">4.48</div><div class="kpi-label">Boys: Men Must Protect Women</div><div class="kpi-delta down">Girls avg: 4.60</div></div>
-      <div class="kpi-card teal"><div class="kpi-icon">👁️</div><div class="kpi-value">44%</div><div class="kpi-label">Boys Witnessed Verbal Harassment</div><div class="kpi-delta neutral">Girls: 70%</div></div>
-      <div class="kpi-card amber"><div class="kpi-icon">⚖️</div><div class="kpi-value">48%</div><div class="kpi-label">Boys Correctly Attribute No Fault</div><div class="kpi-delta up">Girls: 20%</div></div>
+      <div class="kpi-card"><div class="kpi-icon">🏠</div><div class="kpi-value">{boys_gn_household}</div><div class="kpi-label">Boys: Girls Focus on Household</div><div class="kpi-delta neutral">Girls avg: {girls_gn_household}</div></div>
+      <div class="kpi-card navy"><div class="kpi-icon">🤝</div><div class="kpi-value">{boys_gn_protect}</div><div class="kpi-label">Boys: Men Must Protect Women</div><div class="kpi-delta down">Girls avg: {girls_gn_protect}</div></div>
+      <div class="kpi-card teal"><div class="kpi-icon">👁️</div><div class="kpi-value">{boys_verbal_pct}%</div><div class="kpi-label">Boys Witnessed Verbal Harassment</div><div class="kpi-delta neutral">Girls: {girls_verbal_pct}%</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">⚖️</div><div class="kpi-value">{boys_blame_perp_pct}%</div><div class="kpi-label">Boys Strongly Blame Perpetrator</div><div class="kpi-delta up">Girls: {girls_blame_perp_pct}%</div></div>
     </div>
 
     <div class="chart-grid cols-2">
@@ -812,10 +812,10 @@
 
     <div class="insight-row">
       <div class="insight-box primary">
-        <strong>Witnessing Harassment:</strong> <strong>70% of girls</strong> report having witnessed verbal harassment compared to only 44% of boys. This higher exposure among girls may reflect their greater vulnerability in public spaces and reinforces the importance of bystander intervention training as a programme component.
+        <strong>Witnessing Harassment:</strong> <strong>{girls_verbal_pct}% of girls</strong> and <strong>{boys_verbal_pct}% of boys</strong> report having witnessed verbal harassment. Exposure patterns across gender highlight the importance of bystander intervention training as a programme component.
       </div>
       <div class="insight-box amber">
-        <strong>Blame Attribution:</strong> When asked who is responsible for harassment, boys show clearer attribution of fault to perpetrators — 48% strongly place blame on perpetrators. Girls show a more distributed response with 50% attributing it to "somewhat" the perpetrator (code 3), potentially reflecting internalised stigma that the programme aims to address.
+        <strong>Blame Attribution:</strong> Only <strong>{boys_blame_perp_pct}% of boys</strong> and <strong>{girls_blame_perp_pct}% of girls</strong> strongly attribute fault to the perpetrator (code 5). The remainder show more distributed or victim-ambivalent responses — potentially reflecting internalised stigma that the programme aims to address.
       </div>
     </div>
     <p class="footnote">Gender norms scale: 1=Strongly Disagree, 5=Strongly Agree. Items: G2="Girls should focus on household tasks"; G3="Education is equally important for boys and girls" (reverse-coded); G5="Children suffer when mothers work"; G6="Women need male protection to be safe". Blame scale: 1=Completely victim's fault through 5=Completely perpetrator's fault.</p>
@@ -832,10 +832,10 @@
     </div>
 
     <div class="kpi-grid">
-      <div class="kpi-card teal"><div class="kpi-icon">😊</div><div class="kpi-value">4.12</div><div class="kpi-label">Boys Overall Life Quality (PQL)</div><div class="kpi-delta up">Girls: 4.15 / 5.0</div></div>
-      <div class="kpi-card"><div class="kpi-icon">🤝</div><div class="kpi-value">4.48</div><div class="kpi-label">Boys Family Wellbeing (PQL)</div><div class="kpi-delta up">Girls: 4.25 / 5.0</div></div>
-      <div class="kpi-card amber"><div class="kpi-icon">💪</div><div class="kpi-value">2.04</div><div class="kpi-label">Boys Self-Efficacy Item 1</div><div class="kpi-delta neutral">Girls: 2.45 / 3.0</div></div>
-      <div class="kpi-card purple"><div class="kpi-icon">🧠</div><div class="kpi-value">2.80</div><div class="kpi-label">Girls: "I Can Find Solutions"</div><div class="kpi-delta up">Boys: 2.44 / 3.0</div></div>
+      <div class="kpi-card teal"><div class="kpi-icon">😊</div><div class="kpi-value">{boys_pql_overall}</div><div class="kpi-label">Boys Overall Life Quality (PQL)</div><div class="kpi-delta up">Girls: {girls_pql_overall} / 5.0</div></div>
+      <div class="kpi-card"><div class="kpi-icon">🤝</div><div class="kpi-value">{boys_pql_family}</div><div class="kpi-label">Boys Family Wellbeing (PQL)</div><div class="kpi-delta up">Girls: {girls_pql_family} / 5.0</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">💪</div><div class="kpi-value">{boys_se_1}</div><div class="kpi-label">Boys Self-Efficacy Item 1</div><div class="kpi-delta neutral">Girls: {girls_se_1} / 3.0</div></div>
+      <div class="kpi-card purple"><div class="kpi-icon">🧠</div><div class="kpi-value">{girls_se_2}</div><div class="kpi-label">Girls: "I Can Find Solutions"</div><div class="kpi-delta up">Boys: {boys_se_2} / 3.0</div></div>
     </div>
 
     <div class="chart-grid cols-2">
@@ -866,10 +866,10 @@
 
     <div class="insight-row">
       <div class="insight-box teal">
-        <strong>Wellbeing Scores:</strong> Both boys and girls report high wellbeing on the PQL scale, with family relationships receiving the highest scores (boys 4.48, girls 4.25). Girls report slightly higher friendship wellbeing (4.20 vs 3.92 for boys), while boys score higher on family and learning dimensions — suggesting complementary patterns of social connectedness.
+        <strong>Wellbeing Scores:</strong> Boys' overall PQL mean is {boys_pql_overall} and girls' is {girls_pql_overall} (out of 5). Family wellbeing scores are {boys_pql_family} (boys) and {girls_pql_family} (girls); friendship wellbeing is {boys_pql_friend} (boys) and {girls_pql_friend} (girls) — showing distinct patterns of social connectedness across genders.
       </div>
       <div class="insight-box purple">
-        <strong>Self-Efficacy Advantage:</strong> Girls score higher than boys on two of three self-efficacy items, particularly "I can think of solutions to problems" (2.80 vs 2.44) and "I can handle challenges" (2.45 vs 2.04). This aligns with girls' higher academic aspirations and suggests the programme may be building girls' internal agency.
+        <strong>Self-Efficacy:</strong> Item means — "I can think of solutions" (boys {boys_se_2}, girls {girls_se_2}), "I can handle challenges" (boys {boys_se_1}, girls {girls_se_1}), item 3 (boys {boys_se_3}, girls {girls_se_3}). Relative differences between genders inform where the programme may be strengthening girls' internal agency.
       </div>
     </div>
     <p class="footnote">PQL Scale: Items ask how often each applies in the past month (1=Never, 2=Almost Never, 3=Sometimes, 4=Often, 5=Almost Always). Self-Efficacy Scale: 3-point agreement scale (1=Disagree, 2=Neutral, 3=Agree). Higher scores indicate better outcomes on both scales.</p>
@@ -886,10 +886,10 @@
     </div>
 
     <div class="kpi-grid">
-      <div class="kpi-card navy"><div class="kpi-icon">🔨</div><div class="kpi-value">3.52</div><div class="kpi-label">Men Should Do Repairs</div><div class="kpi-delta down">Mean / 5.0 — Traditional</div></div>
-      <div class="kpi-card teal"><div class="kpi-icon">🤐</div><div class="kpi-value">1.56</div><div class="kpi-label">Must Tease to Fit In</div><div class="kpi-delta up">Rejected by 92% of boys</div></div>
-      <div class="kpi-card amber"><div class="kpi-icon">🎮</div><div class="kpi-value">4.64</div><div class="kpi-label">Impulse Control (Item 8)</div><div class="kpi-delta up">High self-control reported</div></div>
-      <div class="kpi-card purple"><div class="kpi-icon">👥</div><div class="kpi-value">2.20</div><div class="kpi-label">Peer Pressure Item 1</div><div class="kpi-delta neutral">Moderate susceptibility</div></div>
+      <div class="kpi-card navy"><div class="kpi-icon">🔨</div><div class="kpi-value">{masc_1}</div><div class="kpi-label">Men Should Do Repairs</div><div class="kpi-delta down">Mean / 5.0</div></div>
+      <div class="kpi-card teal"><div class="kpi-icon">🤐</div><div class="kpi-value">{masc_5}</div><div class="kpi-label">Must Tease to Fit In</div><div class="kpi-delta up">Mean / 5.0</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">🎮</div><div class="kpi-value">{impulse_8}</div><div class="kpi-label">Impulse Control (Item 8)</div><div class="kpi-delta up">Mean / 5.0</div></div>
+      <div class="kpi-card purple"><div class="kpi-icon">👥</div><div class="kpi-value">{peer_1}</div><div class="kpi-label">Peer Pressure Item 1</div><div class="kpi-delta neutral">Mean / 4.0</div></div>
     </div>
 
     <div class="chart-grid cols-2">
@@ -920,10 +920,10 @@
 
     <div class="insight-row">
       <div class="insight-box navy">
-        <strong>Masculinity Norms:</strong> Boys show mixed patterns — high traditional endorsement of men doing household repairs (3.52) and men not showing worry/fear (3.52), but strongly reject the idea that "boys must tease others to fit in" (mean 1.56, with 92% disagreeing). The rejection of teasing norms is an encouraging indicator for bystander behaviour.
+        <strong>Masculinity Norms:</strong> Boys endorse men doing household repairs at {masc_1}/5.0, men not asking for help at {masc_2}/5.0, not showing worry/fear at {masc_3}/5.0, winning at games at {masc_4}/5.0, and teasing to fit in at {masc_5}/5.0. Lower scores on the teasing item indicate positive bystander tendencies.
       </div>
       <div class="insight-box teal">
-        <strong>Impulse Control:</strong> Boys show relatively high scores on item 8 (4.64) which measures a positive self-control attribute, but lower scores on items 4–6 suggesting some difficulty with immediate impulse regulation. The bimodal distribution (many at 1=Never and 5=Always) across several items indicates heterogeneous profiles within the sample.
+        <strong>Impulse Control:</strong> Boys score {impulse_8} on item 8, which measures a positive self-control attribute. Mean scores across the 8-item scale highlight heterogeneous profiles within the sample — see the detailed chart for per-item variation.
       </div>
     </div>
 
@@ -931,37 +931,37 @@
       <div>
         <div class="progress-header">
           <span class="progress-label">M1: Men should handle all household repairs</span>
-          <span class="progress-pct">3.52 / 5.0</span>
+          <span class="progress-pct">{masc_1} / 5.0</span>
         </div>
-        <div class="progress-bar"><div class="progress-fill navy" style="width:70.4%"></div></div>
+        <div class="progress-bar"><div class="progress-fill navy" style="width:{masc_1_pct}%"></div></div>
       </div>
       <div>
         <div class="progress-header">
           <span class="progress-label">M2: Men shouldn't need to ask for help</span>
-          <span class="progress-pct">3.20 / 5.0</span>
+          <span class="progress-pct">{masc_2} / 5.0</span>
         </div>
-        <div class="progress-bar"><div class="progress-fill navy" style="width:64%"></div></div>
+        <div class="progress-bar"><div class="progress-fill navy" style="width:{masc_2_pct}%"></div></div>
       </div>
       <div>
         <div class="progress-header">
           <span class="progress-label">M3: Men shouldn't show worry or fear</span>
-          <span class="progress-pct">3.52 / 5.0</span>
+          <span class="progress-pct">{masc_3} / 5.0</span>
         </div>
-        <div class="progress-bar"><div class="progress-fill amber" style="width:70.4%"></div></div>
+        <div class="progress-bar"><div class="progress-fill amber" style="width:{masc_3_pct}%"></div></div>
       </div>
       <div>
         <div class="progress-header">
           <span class="progress-label">M4: A guy must win games/competitions</span>
-          <span class="progress-pct">3.36 / 5.0</span>
+          <span class="progress-pct">{masc_4} / 5.0</span>
         </div>
-        <div class="progress-bar"><div class="progress-fill amber" style="width:67.2%"></div></div>
+        <div class="progress-bar"><div class="progress-fill amber" style="width:{masc_4_pct}%"></div></div>
       </div>
       <div>
         <div class="progress-header">
           <span class="progress-label">M5: Boys must tease others to fit in (REJECTED)</span>
-          <span class="progress-pct">1.56 / 5.0</span>
+          <span class="progress-pct">{masc_5} / 5.0</span>
         </div>
-        <div class="progress-bar"><div class="progress-fill teal" style="width:31.2%"></div></div>
+        <div class="progress-bar"><div class="progress-fill teal" style="width:{masc_5_pct}%"></div></div>
       </div>
     </div>
 
@@ -979,10 +979,10 @@
     </div>
 
     <div class="kpi-grid">
-      <div class="kpi-card navy"><div class="kpi-icon">🧹</div><div class="kpi-value">3.0h</div><div class="kpi-label">Avg Daily Cleaning Time</div><div class="kpi-delta down">Highest household burden</div></div>
-      <div class="kpi-card amber"><div class="kpi-icon">👶</div><div class="kpi-value">3.2h</div><div class="kpi-label">Avg Daily Caring Time</div><div class="kpi-delta neutral">Child/elderly care</div></div>
-      <div class="kpi-card teal"><div class="kpi-icon">🍳</div><div class="kpi-value">2.0h</div><div class="kpi-label">Avg Daily Cooking Time</div><div class="kpi-delta neutral">Food preparation</div></div>
-      <div class="kpi-card purple"><div class="kpi-icon">📢</div><div class="kpi-value">85%</div><div class="kpi-label">Would Report to Family</div><div class="kpi-delta up">Primary support network</div></div>
+      <div class="kpi-card navy"><div class="kpi-icon">🧹</div><div class="kpi-value">{time_cleaning}h</div><div class="kpi-label">Avg Daily Cleaning Time</div><div class="kpi-delta down">Household burden</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">👶</div><div class="kpi-value">{time_caring}h</div><div class="kpi-label">Avg Daily Caring Time</div><div class="kpi-delta neutral">Child/elderly care</div></div>
+      <div class="kpi-card teal"><div class="kpi-icon">🍳</div><div class="kpi-value">{time_cooking}h</div><div class="kpi-label">Avg Daily Cooking Time</div><div class="kpi-delta neutral">Food preparation</div></div>
+      <div class="kpi-card purple"><div class="kpi-icon">📢</div><div class="kpi-value">{girls_share_parent_pct}%</div><div class="kpi-label">Would Report to Family</div><div class="kpi-delta up">Primary support network</div></div>
     </div>
 
     <div class="chart-grid cols-2">
@@ -1013,10 +1013,10 @@
 
     <div class="insight-row">
       <div class="insight-box navy">
-        <strong>Household Time Burden:</strong> Girls spend an average of <strong>3.2 hours on caregiving</strong> and <strong>3.0 hours on cleaning</strong> per day — a substantial non-academic time burden that may affect study time and school performance. Despite this burden, girls still outperform boys academically, suggesting significant resilience.
+        <strong>Household Time Burden:</strong> Girls spend an average of <strong>{time_caring} hours on caregiving</strong>, <strong>{time_cleaning} hours on cleaning</strong>, and <strong>{time_cooking} hours on cooking</strong> per day — a substantial non-academic time burden that may affect study time and academic performance.
       </div>
       <div class="insight-box teal">
-        <strong>Harassment Reporting:</strong> <strong>85% of girls</strong> (17/20) would report harassment to formal authorities, with family (65% — friends/siblings) being the primary informal channel. Only 5% would tell no one, suggesting a relatively supportive social network. The programme's emphasis on safe disclosure channels appears to be effective.
+        <strong>Harassment Reporting:</strong> <strong>{girls_report_pct}% of girls</strong> ({girls_report_n}/{n_girls}) would report harassment to formal authorities. Informal disclosure: {girls_share_parent_pct}% would tell family, {girls_share_friend_pct}% would tell friends/siblings, and {girls_share_nobody_pct}% would tell no one — informing how the programme's safe disclosure channels should be targeted.
       </div>
     </div>
 
@@ -1025,28 +1025,28 @@
         <div class="callout-icon">👗</div>
         <div class="callout-body">
           <h4>Clothing Modification</h4>
-          <p>80% of girls sometimes or always change what they wear due to safety concerns — the most common behavioural adaptation reported.</p>
+          <p>{girls_clothing_mod_pct}% of girls sometimes or always change what they wear due to safety concerns — a common behavioural adaptation reported.</p>
         </div>
       </div>
       <div class="callout amber">
         <div class="callout-icon">⏰</div>
         <div class="callout-body">
           <h4>Timing Adaptation</h4>
-          <p>65% of girls sometimes or always change what time they travel — avoiding certain hours perceived as less safe for female movement.</p>
+          <p>{girls_timing_mod_pct}% of girls sometimes or always change what time they travel — avoiding certain hours perceived as less safe for female movement.</p>
         </div>
       </div>
       <div class="callout navy">
         <div class="callout-icon">🗺️</div>
         <div class="callout-body">
           <h4>Route Changes</h4>
-          <p>65% of girls sometimes or always change their route to school — adding time and distance to avoid perceived danger spots.</p>
+          <p>{girls_route_mod_pct}% of girls sometimes or always change their route to school — adding time and distance to avoid perceived danger spots.</p>
         </div>
       </div>
       <div class="callout teal">
         <div class="callout-icon">🚨</div>
         <div class="callout-body">
           <h4>Safety Awareness</h4>
-          <p>55% of girls (code 1+2 on identify_escape) actively identify escape routes or safety strategies when in public — a key programme skill.</p>
+          <p>{girls_escape_pct}% of girls (code 1+2 on identify_escape) actively identify escape routes or safety strategies when in public — a key programme skill.</p>
         </div>
       </div>
     </div>
