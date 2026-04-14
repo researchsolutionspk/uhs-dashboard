@@ -414,7 +414,7 @@
       <div class="header-meta">
         <strong>Pakistan · Urban Schools</strong><br>
         Field Collection: April 2026<br>
-        <span class="header-pill">{n_total} Students · 2 Schools · Grade 8</span>
+        <span class="header-pill">{n_total} Students · {n_schools} Schools · Grade 8</span>
       </div>
     </div>
     <nav class="nav-tabs" id="navTabs">
@@ -452,7 +452,7 @@
     <div class="kpi-grid">
       <div class="kpi-card navy">
         <div class="kpi-icon">🏫</div>
-        <div class="kpi-value">2</div>
+        <div class="kpi-value">{n_schools}</div>
         <div class="kpi-label">Schools Surveyed</div>
         <div class="kpi-delta navy">1 District · Urban Pakistan</div>
       </div>
@@ -573,12 +573,12 @@
     <div class="chart-grid cols-2">
       <div class="chart-card">
         <h3>Father's Education Level</h3>
-        <div class="chart-desc">Highest education attained by father (boys n=25, girls n=20)</div>
+        <div class="chart-desc">Highest education attained by father (boys n={n_boys}, girls n={n_girls})</div>
         <div class="chart-wrap"><canvas id="chartFatherEdu"></canvas></div>
       </div>
       <div class="chart-card">
         <h3>Mother's Education Level</h3>
-        <div class="chart-desc">Highest education attained by mother (boys n=25, girls n=20)</div>
+        <div class="chart-desc">Highest education attained by mother (boys n={n_boys}, girls n={n_girls})</div>
         <div class="chart-wrap"><canvas id="chartMotherEdu"></canvas></div>
       </div>
     </div>
@@ -604,7 +604,7 @@
       </div>
       <div class="chart-card">
         <h3>Language Spoken at Home</h3>
-        <div class="chart-desc">Primary language of the household (boys n=25, girls n=20)</div>
+        <div class="chart-desc">Primary language of the household (boys n={n_boys}, girls n={n_girls})</div>
         <div class="chart-wrap"><canvas id="chartLanguage"></canvas></div>
       </div>
     </div>
@@ -751,7 +751,7 @@
       </div>
       <div class="chart-card">
         <h3>Girls' Safety Behaviour Modifications</h3>
-        <div class="chart-desc">Frequency of behaviour adaptation to avoid safety risks (girls only, n=20)</div>
+        <div class="chart-desc">Frequency of behaviour adaptation to avoid safety risks (girls only, n={n_girls})</div>
         <div class="chart-wrap"><canvas id="chartBehaviorMods"></canvas></div>
       </div>
     </div>
@@ -894,7 +894,7 @@
 
     <div class="chart-grid cols-2">
       <div class="chart-card">
-        <h3>Masculinity Norms Scale — Boys (n=25)</h3>
+        <h3>Masculinity Norms Scale — Boys (n={n_boys})</h3>
         <div class="chart-desc">Agreement with traditional masculinity statements (1=Strongly Disagree, 5=Strongly Agree)</div>
         <div class="chart-wrap"><canvas id="chartMasculinity"></canvas></div>
       </div>
@@ -907,7 +907,7 @@
 
     <div class="chart-grid cols-2">
       <div class="chart-card">
-        <h3>Impulse Control — Boys (n=25)</h3>
+        <h3>Impulse Control — Boys (n={n_boys})</h3>
         <div class="chart-desc">Mean scores across 8 impulse control items (1=Never to 5=Always)</div>
         <div class="chart-wrap"><canvas id="chartImpulse"></canvas></div>
       </div>
@@ -965,7 +965,7 @@
       </div>
     </div>
 
-    <p class="footnote">Masculinity Norms: 5-item scale measuring traditional masculine role endorsement (1=Strongly Disagree, 5=Strongly Agree). Impulse Control: 8-item scale (1=Never, 5=Always); higher scores on positive items indicate better self-regulation. CBT scale: 4-point scale measuring cognitive thought patterns. Peer Pressure: 4-point scale (1=Never agree, 4=Always agree). Boys only (n=25).</p>
+    <p class="footnote">Masculinity Norms: 5-item scale measuring traditional masculine role endorsement (1=Strongly Disagree, 5=Strongly Agree). Impulse Control: 8-item scale (1=Never, 5=Always); higher scores on positive items indicate better self-regulation. CBT scale: 4-point scale measuring cognitive thought patterns. Peer Pressure: 4-point scale (1=Never agree, 4=Always agree). Boys only (n={n_boys}).</p>
   </div>
 
   <!-- ══ GIRLS' MODULE ══ -->
@@ -988,7 +988,7 @@
     <div class="chart-grid cols-2">
       <div class="chart-card">
         <h3>Girls' Daily Household Time Use</h3>
-        <div class="chart-desc">Average hours per day girls spend on household activities (girls n=20)</div>
+        <div class="chart-desc">Average hours per day girls spend on household activities (girls n={n_girls})</div>
         <div class="chart-wrap"><canvas id="chartTimeUse"></canvas></div>
       </div>
       <div class="chart-card">
@@ -1051,7 +1051,7 @@
       </div>
     </div>
 
-    <p class="footnote">Girls' module data (n=20). Household time use measured in approximate daily hours. Harassment sharing variables: 0=No, 1=Yes — respondents could select multiple people they would tell. Reporting: 1=Yes would report, 2=No. Behaviour modification: 1=Always, 2=Sometimes, 3=Rarely, 4=Never. RRT (garbling) used for sensitive harassment items to protect respondent anonymity.</p>
+    <p class="footnote">Girls' module data (n={n_girls}). Household time use measured in approximate daily hours. Harassment sharing variables: 0=No, 1=Yes — respondents could select multiple people they would tell. Reporting: 1=Yes would report, 2=No. Behaviour modification: 1=Always, 2=Sometimes, 3=Rarely, 4=Never. RRT (garbling) used for sensitive harassment items to protect respondent anonymity.</p>
   </div>
 
 </div><!-- /main -->

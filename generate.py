@@ -71,6 +71,10 @@ def js_list(lst):
 print("Reading CSV files...")
 boys  = read_csv(BOYS_CSV)
 girls = read_csv(GIRLS_CSV)
+
+def _school_ids(rows):
+    return {r.get('school_id', '').strip() for r in rows if r.get('school_id', '').strip()}
+n_schools = len(_school_ids(boys) | _school_ids(girls))
 n_boys  = len(boys)
 n_girls = len(girls)
 n_total = n_boys + n_girls
@@ -743,9 +747,10 @@ output_text = template_text.replace("// %%CHART_BLOCK%%", js)
 
 # Substitute KPI placeholders in the Overview section
 output_text = (output_text
-    .replace("{n_total}", str(n_total))
-    .replace("{n_boys}",  str(n_boys))
-    .replace("{n_girls}", str(n_girls))
+    .replace("{n_total}",   str(n_total))
+    .replace("{n_boys}",    str(n_boys))
+    .replace("{n_girls}",   str(n_girls))
+    .replace("{n_schools}", str(n_schools))
 )
 
 # Update last-updated timestamp in the footer line
