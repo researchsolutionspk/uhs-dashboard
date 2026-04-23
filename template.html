@@ -1069,7 +1069,7 @@
       <h3>🏫 Girls Treatment — Completed Schools</h3>
       <div class="chart-desc">Schools where ≥ 15 endline surveys have been collected. Per-school endline target is 40 (20 baseline+training + 20 training-only). Percentage column tracks the baseline-panel recapture rate: BL+TR found at endline out of the 20 baseline+training girls per school.</div>
       <div style="max-height:520px;overflow-y:auto;border:1px solid var(--rs-navy-light);border-radius:8px;">
-        <table class="data-table" style="margin:0;">
+        <table class="data-table" style="margin:0;" id="coverage-gt-table">
           <thead style="position:sticky;top:0;z-index:1;">
             <tr>
               <th style="text-align:right;">School ID</th>
@@ -1078,7 +1078,7 @@
               <th style="text-align:right;">BL + TR</th>
               <th style="text-align:right;">TR only</th>
               <th style="text-align:right;">New</th>
-              <th style="text-align:right;">BL+TR / 20</th>
+              <th style="text-align:right;cursor:pointer;user-select:none;" onclick="sortByPct('coverage-gt-table')" title="Click to sort">BL+TR / 20</th>
             </tr>
           </thead>
           <tbody>
@@ -1092,7 +1092,7 @@
       <h3>🏫 Girls Control — Completed Schools</h3>
       <div class="chart-desc">Schools where ≥ 15 endline surveys have been collected. Per-school endline target is 20. <strong>BL</strong> = matched against baseline roster; <strong>New</strong> = replacement/walk-in.</div>
       <div style="max-height:520px;overflow-y:auto;border:1px solid var(--rs-navy-light);border-radius:8px;">
-        <table class="data-table" style="margin:0;">
+        <table class="data-table" style="margin:0;" id="coverage-gc-table">
           <thead style="position:sticky;top:0;z-index:1;">
             <tr>
               <th style="text-align:right;">School ID</th>
@@ -1100,7 +1100,7 @@
               <th style="text-align:right;">Endline</th>
               <th style="text-align:right;">BL</th>
               <th style="text-align:right;">New</th>
-              <th style="text-align:right;">BL / 20</th>
+              <th style="text-align:right;cursor:pointer;user-select:none;" onclick="sortByPct('coverage-gc-table')" title="Click to sort">BL / 20</th>
             </tr>
           </thead>
           <tbody>
@@ -1114,7 +1114,7 @@
       <h3>🏫 Boys Treatment — Completed Schools</h3>
       <div class="chart-desc">Schools where ≥ 15 endline surveys have been collected. Per-school endline target is 20. <strong>Trained</strong> = matched against training roster; <strong>New</strong> = replacement/walk-in. Boys Control schools are excluded by design.</div>
       <div style="max-height:520px;overflow-y:auto;border:1px solid var(--rs-navy-light);border-radius:8px;">
-        <table class="data-table" style="margin:0;">
+        <table class="data-table" style="margin:0;" id="coverage-bt-table">
           <thead style="position:sticky;top:0;z-index:1;">
             <tr>
               <th style="text-align:right;">School ID</th>
@@ -1122,7 +1122,7 @@
               <th style="text-align:right;">Endline</th>
               <th style="text-align:right;">Trained</th>
               <th style="text-align:right;">New</th>
-              <th style="text-align:right;">Trained / 20</th>
+              <th style="text-align:right;cursor:pointer;user-select:none;" onclick="sortByPct('coverage-bt-table')" title="Click to sort">Trained / 20</th>
             </tr>
           </thead>
           <tbody>
@@ -1168,6 +1168,35 @@ function showPanel(id, btn) {
   document.getElementById('panel-' + id).classList.add('active');
   btn.classList.add('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Sort a coverage table by its last column (the % column)
+// First click: descending; subsequent clicks toggle asc/desc.
+// Rows with non-numeric last cell (e.g. the empty-state row) stay anchored at the bottom.
+function sortByPct(tableId) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const tbody = table.tBodies[0];
+  const header = table.tHead.rows[0].cells[table.tHead.rows[0].cells.length - 1];
+  const baseLabel = header.dataset.baseLabel || header.textContent.replace(/\s*[▲▼]\s*$/, '');
+  header.dataset.baseLabel = baseLabel;
+  const desc = header.dataset.sortDir !== 'desc';
+  header.dataset.sortDir = desc ? 'desc' : 'asc';
+  header.textContent = baseLabel + (desc ? ' ▼' : ' ▲');
+  const rows = Array.from(tbody.rows);
+  const parse = r => {
+    const txt = r.cells[r.cells.length - 1].textContent.trim();
+    const n = parseFloat(txt);
+    return Number.isFinite(n) ? n : null;
+  };
+  rows.sort((a, b) => {
+    const av = parse(a), bv = parse(b);
+    if (av === null && bv === null) return 0;
+    if (av === null) return 1;
+    if (bv === null) return -1;
+    return desc ? bv - av : av - bv;
+  });
+  rows.forEach(r => tbody.appendChild(r));
 }
 
 // ── Register plugins
