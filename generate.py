@@ -530,15 +530,17 @@ cov_bt_has_rosters = cov_bt_loaded > 0
 # Per-school table rows — one HTML block per arm
 import html as _html
 
+COMPLETION_THRESHOLD = 15   # School is "completed" if endline surveys >= 15
+
 def _build_school_rows(per_school, endline_target, bucket_keys, pct_key, pct_denom):
     """Build HTML <tr>…</tr> rows for completed schools only.
-    A school qualifies if its roster is loaded AND endline total >= target.
+    A school qualifies if its roster is loaded AND endline total >= COMPLETION_THRESHOLD.
     Returns an empty-state row if no school qualifies."""
     # Column count = sid + name + endline + buckets + %
     ncols = 3 + len(bucket_keys) + 1
     out = []
     for s in sorted(per_school, key=lambda x: x["sid"]):
-        if not s["loaded"] or s["total"] < endline_target:
+        if not s["loaded"] or s["total"] < COMPLETION_THRESHOLD:
             continue
         name_esc = _html.escape(s["name"])
         row_pct = pct(s[pct_key], pct_denom)
