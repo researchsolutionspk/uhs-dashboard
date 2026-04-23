@@ -564,10 +564,10 @@ def _build_school_rows(per_school, endline_target, bucket_keys, pct_key, pct_den
         )
     return "\n          ".join(out)
 
-# Girls Treatment: endline target per school = 40 (20 BL+TR + 20 TR-only).
-# Percentage tracks the panel-recapture rate: BL+TR re-found out of the 20 baseline girls.
+# Girls Treatment: Endline column shown as "X / 20" to match the panel size of 20 baseline+training girls
+# (matches Girls Control and Boys Treatment tables). Percentage is BL+TR / 20 recapture rate.
 cov_gt_school_rows = _build_school_rows(
-    gt_per_school, endline_target=40, bucket_keys=["bl_tr", "tr_only", "new"],
+    gt_per_school, endline_target=20, bucket_keys=["bl_tr", "tr_only", "new"],
     pct_key="bl_tr", pct_denom=20,
 )
 # Girls Control: target 20 baseline girls; % = BL re-found out of 20.
