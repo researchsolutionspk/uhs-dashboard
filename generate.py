@@ -530,46 +530,36 @@ cov_bt_has_rosters = cov_bt_loaded > 0
 # Per-school table rows — one HTML block per arm
 import html as _html
 
-_PENDING_BADGE = ("<span style='display:inline-block;padding:2px 8px;border-radius:4px;"
-                  "background:var(--rs-navy-50);color:var(--rs-navy-soft);font-size:11px;'>"
-                  "Pending roster</span>")
-
 def _build_school_rows(per_school, endline_target, bucket_keys, pct_key, pct_denom):
-    """Build HTML <tr>…</tr> rows for a per-school table.
-    - bucket_keys: dict keys whose values (ints or None) form the bucket columns.
-    - pct_key: dict key used as the numerator for the % column.
-    - pct_denom: denominator for the % column (shown as 'X / denom' via the header)."""
+    """Build HTML <tr>…</tr> rows for completed schools only.
+    A school qualifies if its roster is loaded AND endline total >= target.
+    Returns an empty-state row if no school qualifies."""
+    # Column count = sid + name + endline + buckets + %
+    ncols = 3 + len(bucket_keys) + 1
     out = []
     for s in sorted(per_school, key=lambda x: x["sid"]):
+        if not s["loaded"] or s["total"] < endline_target:
+            continue
         name_esc = _html.escape(s["name"])
-        base_cells = (
-            f"<td style='text-align:right;'>{s['sid']}</td>"
-            f"<td>{name_esc}</td>"
+        row_pct = pct(s[pct_key], pct_denom)
+        bucket_cells = "".join(
+            f"<td style='text-align:right;font-weight:700;'>{s[k]}</td>"
+            for k in bucket_keys
         )
-        if s["loaded"]:
-            row_pct = pct(s[pct_key], pct_denom)
-            bucket_cells = "".join(
-                f"<td style='text-align:right;font-weight:700;'>{s[k]}</td>"
-                for k in bucket_keys
-            )
-            out.append(
-                f"<tr>{base_cells}"
-                f"<td style='text-align:center;'><span class='badge-navy'>Loaded</span></td>"
-                f"<td style='text-align:right;'>{s['total']}"
-                f"<span style='color:var(--rs-navy-soft);'> / {endline_target}</span></td>"
-                f"{bucket_cells}"
-                f"<td style='text-align:right;'>{row_pct}%</td></tr>"
-            )
-        else:
-            dashes = "".join("<td style='text-align:right;'>—</td>" for _ in bucket_keys)
-            out.append(
-                f"<tr style='color:var(--rs-navy-soft);'>{base_cells}"
-                f"<td style='text-align:center;'>{_PENDING_BADGE}</td>"
-                f"<td style='text-align:right;'>{s['total']}"
-                f"<span style='color:var(--rs-navy-soft);'> / {endline_target}</span></td>"
-                f"{dashes}"
-                f"<td style='text-align:right;'>—</td></tr>"
-            )
+        out.append(
+            f"<tr><td style='text-align:right;'>{s['sid']}</td>"
+            f"<td>{name_esc}</td>"
+            f"<td style='text-align:right;'>{s['total']}"
+            f"<span style='color:var(--rs-navy-soft);'> / {endline_target}</span></td>"
+            f"{bucket_cells}"
+            f"<td style='text-align:right;'>{row_pct}%</td></tr>"
+        )
+    if not out:
+        out.append(
+            f"<tr><td colspan='{ncols}' style='text-align:center;padding:24px;"
+            f"color:var(--rs-navy-soft);font-style:italic;'>"
+            f"No schools completed yet — endline collection in progress.</td></tr>"
+        )
     return "\n          ".join(out)
 
 # Girls Treatment: endline target per school = 40 (20 BL+TR + 20 TR-only).
