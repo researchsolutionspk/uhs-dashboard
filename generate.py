@@ -433,25 +433,48 @@ cov = {
                         "schools_loaded": 0, "schools_total": 0, "endline_rows_loaded": 0},
 }
 
+gt_per_school = []   # per-school detail for Girls Treatment table (all 61 schools)
+
 for m in mapping:
     cat = m["category"]
     if cat in (None, "boys_control"): continue
     cov[cat]["schools_total"] += 1
     sid = m["school_id"]
     roster = rosters.get(sid)
+
+    if cat == "girls_treatment":
+        rows = girls_by_school.get(sid, [])
+        total = len(rows)
+        if roster:
+            cov[cat]["schools_loaded"] += 1
+            cov[cat]["endline_rows_loaded"] += total
+            t1, t2 = roster["t1"], roster["t2"]
+            bl_tr = tr_only = new_ = 0
+            for r in rows:
+                cands = _girls_candidate_ids(r)
+                if cands & t1:   bl_tr   += 1
+                elif cands & t2: tr_only += 1
+                else:            new_    += 1
+            cov[cat]["bl_tr"]   += bl_tr
+            cov[cat]["tr_only"] += tr_only
+            cov[cat]["new"]     += new_
+            gt_per_school.append({
+                "sid": sid, "name": m["name"], "emis": m["emis"],
+                "loaded": True, "total": total,
+                "bl_tr": bl_tr, "tr_only": tr_only, "new": new_,
+            })
+        else:
+            gt_per_school.append({
+                "sid": sid, "name": m["name"], "emis": m["emis"],
+                "loaded": False, "total": total,
+                "bl_tr": None, "tr_only": None, "new": None,
+            })
+        continue
+
     if not roster: continue
     cov[cat]["schools_loaded"] += 1
 
-    if cat == "girls_treatment":
-        t1, t2 = roster["t1"], roster["t2"]
-        rows = girls_by_school.get(sid, [])
-        cov[cat]["endline_rows_loaded"] += len(rows)
-        for r in rows:
-            cands = _girls_candidate_ids(r)
-            if cands & t1:   cov[cat]["bl_tr"]   += 1
-            elif cands & t2: cov[cat]["tr_only"] += 1
-            else:            cov[cat]["new"]     += 1
-    elif cat == "girls_control":
+    if cat == "girls_control":
         t1 = roster["t1"]
         rows = girls_by_school.get(sid, [])
         cov[cat]["endline_rows_loaded"] += len(rows)
@@ -488,6 +511,36 @@ cov_bt_pct    = pct(cov_bt_rows, cov_bt_target)
 
 # Boys treatment state — show "awaiting rosters" if none loaded yet
 cov_bt_has_rosters = cov_bt_loaded > 0
+
+# Per-school Girls Treatment table rows (all 61 schools, sorted by school ID)
+import html as _html
+_gt_rows_html = []
+for s in sorted(gt_per_school, key=lambda x: x["sid"]):
+    name_esc = _html.escape(s["name"])
+    if s["loaded"]:
+        row_pct = pct(s["total"], 40)
+        _gt_rows_html.append(
+            f"<tr><td style='text-align:right;'>{s['sid']}</td>"
+            f"<td>{name_esc}</td>"
+            f"<td style='text-align:center;'><span class='badge-navy'>Loaded</span></td>"
+            f"<td style='text-align:right;'>{s['total']}<span style='color:var(--rs-navy-soft);'> / 40</span></td>"
+            f"<td style='text-align:right;font-weight:700;'>{s['bl_tr']}</td>"
+            f"<td style='text-align:right;font-weight:700;'>{s['tr_only']}</td>"
+            f"<td style='text-align:right;font-weight:700;'>{s['new']}</td>"
+            f"<td style='text-align:right;'>{row_pct}%</td></tr>"
+        )
+    else:
+        _gt_rows_html.append(
+            f"<tr style='color:var(--rs-navy-soft);'><td style='text-align:right;'>{s['sid']}</td>"
+            f"<td>{name_esc}</td>"
+            f"<td style='text-align:center;'><span style='display:inline-block;padding:2px 8px;border-radius:4px;background:var(--rs-navy-50);color:var(--rs-navy-soft);font-size:11px;'>Pending roster</span></td>"
+            f"<td style='text-align:right;'>{s['total']}<span style='color:var(--rs-navy-soft);'> / 40</span></td>"
+            f"<td style='text-align:right;'>—</td>"
+            f"<td style='text-align:right;'>—</td>"
+            f"<td style='text-align:right;'>—</td>"
+            f"<td style='text-align:right;'>—</td></tr>"
+        )
+cov_gt_school_rows = "\n          ".join(_gt_rows_html)
 
 print(f"  Girls Treatment : {cov_gt_loaded}/{cov_gt_total} schools loaded, "
       f"{cov_gt_rows} endline rows -> BL+TR={cov_gt_bl_tr}, TR-only={cov_gt_tr_only}, New={cov_gt_new}")
@@ -1059,6 +1112,7 @@ subs = {
     "{cov_bt_target}":  cov_bt_target,  "{cov_bt_pct}":     cov_bt_pct,
     "{cov_bt_status}":  ("Awaiting first boys roster file." if not cov_bt_has_rosters else
                         f"{cov_bt_loaded} of {cov_bt_total} schools have rosters loaded."),
+    "{cov_gt_school_rows}": cov_gt_school_rows,
 }
 for k, v in subs.items():
     output_text = output_text.replace(k, str(v))

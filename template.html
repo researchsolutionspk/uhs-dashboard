@@ -1124,6 +1124,30 @@
       </div>
     </div>
 
+    <div class="chart-card" style="margin-top:20px;">
+      <h3>🏫 Per-School Coverage — Girls Treatment ({cov_gt_total} schools)</h3>
+      <div class="chart-desc">Endline coverage for every Girls Treatment school. <strong>Loaded</strong> = roster docx present in <code>Sample/Sample Tables/</code>; bucket counts are computed from roster match. <strong>Pending roster</strong> = endline rows visible but cannot yet be classified. Target per school: 40 (20 baseline+training + 20 training-only).</div>
+      <div style="max-height:520px;overflow-y:auto;border:1px solid var(--rs-navy-light);border-radius:8px;">
+        <table class="data-table" style="margin:0;">
+          <thead style="position:sticky;top:0;z-index:1;">
+            <tr>
+              <th style="text-align:right;">School ID</th>
+              <th>School Name</th>
+              <th style="text-align:center;">Roster</th>
+              <th style="text-align:right;">Endline</th>
+              <th style="text-align:right;">BL + TR</th>
+              <th style="text-align:right;">TR only</th>
+              <th style="text-align:right;">New</th>
+              <th style="text-align:right;">% of 40</th>
+            </tr>
+          </thead>
+          <tbody>
+          {cov_gt_school_rows}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
     <div class="insight-row">
       <div class="insight-box navy">
         <strong>Methodology:</strong> Each endline girl's <code>b_reg_id</code> and <code>new_reg_id</code> are checked against Table 1 / Table 2 IDs extracted from her school's <em>Sample Tables</em> docx file. Enumerator misclassifications (e.g., a baseline girl logged as "new" on the device) are auto-corrected by this roster match — the docx is treated as the source of truth.
