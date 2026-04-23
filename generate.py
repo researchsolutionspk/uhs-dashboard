@@ -278,6 +278,225 @@ girls_radar = [
 last_updated = datetime.now().strftime("%d %B %Y, %H:%M")
 
 # ══════════════════════════════════════════════════════════════════════════
+# SAMPLE COVERAGE  (new tab — classify endline surveys against per-school rosters)
+# ══════════════════════════════════════════════════════════════════════════
+# Data sources:
+#   - Sample/UHS Schools with GeoCoordinates.xlsx  -> treatment/control mapping
+#   - Sample/Sample Tables/*.docx                   -> per-school Table 1 / Table 2 rosters
+#
+# Per user: only count buckets for schools where a docx roster file exists.
+# Numbers update dynamically as new docx files are dropped into Sample/Sample Tables.
+print("Computing sample coverage...")
+
+from collections import defaultdict
+
+SAMPLE_XLSX = BASE / "Sample/UHS Schools with GeoCoordinates.xlsx"
+SAMPLE_DOCX_DIR = BASE / "Sample/Sample Tables"
+
+def _norm_id(v):
+    """Normalize an ID value (from CSV or docx) to a canonical string key."""
+    if v is None: return ""
+    s = str(v).strip()
+    if not s or s.lower() in ("nan", "none", "null"): return ""
+    # Strip trailing ".0" from numeric-float strings
+    if s.endswith(".0") and s[:-2].isdigit(): s = s[:-2]
+    return s
+
+def _load_school_mapping():
+    """Return list of dicts: {school_id, name, emis, trt, type, category}."""
+    if not SAMPLE_XLSX.exists():
+        print(f"  WARNING: {SAMPLE_XLSX.name} not found — sample coverage will be empty.")
+        return []
+    import openpyxl
+    wb = openpyxl.load_workbook(SAMPLE_XLSX, data_only=True)
+    ws = wb.active
+    headers = [(c.value or "").strip() if isinstance(c.value, str) else str(c.value or "").strip() for c in ws[1]]
+    out = []
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        d = dict(zip(headers, row))
+        sid = d.get("School ID")
+        if sid is None: continue
+        try: sid = int(sid)
+        except: continue
+        type_ = str(d.get("SchoolType", "")).strip()
+        trt   = str(d.get("Treatment", "")).strip()
+        if type_ == "Female" and trt in ("T_Girls", "T_Boys"): cat = "girls_treatment"
+        elif type_ == "Female" and trt == "C":                 cat = "girls_control"
+        elif type_ == "Male"   and trt == "T_Boys":            cat = "boys_treatment"
+        elif type_ == "Male"   and trt == "C":                 cat = "boys_control"
+        else: cat = None
+        out.append({
+            "school_id": sid,
+            "name": str(d.get("SchoolName", "")).strip().upper(),
+            "emis": str(d.get("EMIS Code", "")).strip(),
+            "trt":  trt, "type": type_, "category": cat,
+        })
+    return out
+
+def _docx_school_name(doc):
+    """Extract school name from 'School Name:' cell in Table 1 header."""
+    if not doc.tables: return ""
+    for row in doc.tables[0].rows[:3]:
+        for cell in row.cells:
+            t = cell.text.strip()
+            if "school name" in t.lower():
+                cleaned = t.split(":", 1)[-1] if ":" in t else t
+                return cleaned.replace("\n", " ").strip().upper()
+    return ""
+
+def _docx_table_student_ids(table):
+    """Extract the set of Student IDs from a docx table (skip header and empty cells)."""
+    id_col = header_row = None
+    for r_idx, row in enumerate(table.rows[:3]):
+        for c_idx, cell in enumerate(row.cells):
+            if "student id" in cell.text.strip().lower():
+                id_col = c_idx; header_row = r_idx; break
+        if id_col is not None: break
+    if id_col is None: return set()
+    ids = set()
+    for row in table.rows[header_row + 1:]:
+        if id_col >= len(row.cells): continue
+        val = _norm_id(row.cells[id_col].text)
+        if val: ids.add(val)
+    return ids
+
+def _build_rosters(mapping):
+    """Parse every .docx in SAMPLE_DOCX_DIR, fuzzy-match by school name to mapping.
+    Returns {school_id: {'t1': set, 't2': set, 'files': [...]}}."""
+    if not SAMPLE_DOCX_DIR.exists(): return {}
+    try:
+        from docx import Document
+        from difflib import get_close_matches
+    except ImportError:
+        print("  WARNING: python-docx not installed — roster parsing skipped.")
+        return {}
+    name_to_row = {m["name"]: m for m in mapping if m["name"]}
+    names = list(name_to_row.keys())
+    rosters = {}
+    unmatched = []
+    for f in sorted(SAMPLE_DOCX_DIR.glob("*.docx")):
+        if f.name.startswith("~$"): continue   # Word lock files
+        try:
+            doc = Document(str(f))
+        except Exception as e:
+            print(f"  Skipping {f.name}: {e}"); continue
+        if len(doc.tables) < 1: continue
+        name = _docx_school_name(doc)
+        if not name:
+            unmatched.append((f.name, "no School Name cell found")); continue
+        match = get_close_matches(name, names, n=1, cutoff=0.7)
+        if not match:
+            unmatched.append((f.name, f"no mapping match for '{name}'")); continue
+        sid = name_to_row[match[0]]["school_id"]
+        t1 = _docx_table_student_ids(doc.tables[0]) if len(doc.tables) >= 1 else set()
+        t2 = _docx_table_student_ids(doc.tables[1]) if len(doc.tables) >= 2 else set()
+        if sid in rosters:
+            rosters[sid]["t1"] |= t1
+            rosters[sid]["t2"] |= t2
+            rosters[sid]["files"].append(f.name)
+        else:
+            rosters[sid] = {"t1": t1, "t2": t2, "files": [f.name]}
+    if unmatched:
+        print(f"  {len(unmatched)} roster file(s) unmatched:")
+        for fn, reason in unmatched[:5]: print(f"    - {fn}: {reason}")
+    return rosters
+
+def _rows_by_school(rows):
+    d = defaultdict(list)
+    for r in rows:
+        sid = _norm_id(r.get("school_id", ""))
+        if sid.isdigit(): d[int(sid)].append(r)
+    return d
+
+def _girls_candidate_ids(row):
+    """IDs from a girls endline row that should be checked against the roster."""
+    return {i for i in (_norm_id(row.get("b_reg_id", "")),
+                        _norm_id(row.get("new_reg_id", ""))) if i}
+
+def _boys_candidate_ids(row):
+    """IDs from a boys endline row. Boys CSV has only new_reg_id."""
+    return {i for i in (_norm_id(row.get("new_reg_id", "")),) if i}
+
+mapping = _load_school_mapping()
+rosters = _build_rosters(mapping)
+
+# Bucket the endline rows
+girls_by_school = _rows_by_school(girls)
+boys_by_school  = _rows_by_school(boys)
+
+cov = {
+    "girls_treatment": {"bl_tr": 0, "tr_only": 0, "new": 0,
+                        "schools_loaded": 0, "schools_total": 0, "endline_rows_loaded": 0},
+    "girls_control":   {"bl": 0, "new": 0,
+                        "schools_loaded": 0, "schools_total": 0, "endline_rows_loaded": 0},
+    "boys_treatment":  {"trained": 0, "new": 0,
+                        "schools_loaded": 0, "schools_total": 0, "endline_rows_loaded": 0},
+}
+
+for m in mapping:
+    cat = m["category"]
+    if cat in (None, "boys_control"): continue
+    cov[cat]["schools_total"] += 1
+    sid = m["school_id"]
+    roster = rosters.get(sid)
+    if not roster: continue
+    cov[cat]["schools_loaded"] += 1
+
+    if cat == "girls_treatment":
+        t1, t2 = roster["t1"], roster["t2"]
+        rows = girls_by_school.get(sid, [])
+        cov[cat]["endline_rows_loaded"] += len(rows)
+        for r in rows:
+            cands = _girls_candidate_ids(r)
+            if cands & t1:   cov[cat]["bl_tr"]   += 1
+            elif cands & t2: cov[cat]["tr_only"] += 1
+            else:            cov[cat]["new"]     += 1
+    elif cat == "girls_control":
+        t1 = roster["t1"]
+        rows = girls_by_school.get(sid, [])
+        cov[cat]["endline_rows_loaded"] += len(rows)
+        for r in rows:
+            if _girls_candidate_ids(r) & t1: cov[cat]["bl"]  += 1
+            else:                            cov[cat]["new"] += 1
+    elif cat == "boys_treatment":
+        t1 = roster["t1"]
+        rows = boys_by_school.get(sid, [])
+        cov[cat]["endline_rows_loaded"] += len(rows)
+        for r in rows:
+            if _boys_candidate_ids(r) & t1: cov[cat]["trained"] += 1
+            else:                           cov[cat]["new"]     += 1
+
+# Convenience locals used in subs (prefixed with cov_)
+gt = cov["girls_treatment"]; gc = cov["girls_control"]; bt = cov["boys_treatment"]
+cov_gt_bl_tr   = gt["bl_tr"];   cov_gt_tr_only = gt["tr_only"]; cov_gt_new     = gt["new"]
+cov_gt_loaded  = gt["schools_loaded"]; cov_gt_total = gt["schools_total"]; cov_gt_rows = gt["endline_rows_loaded"]
+cov_gc_bl      = gc["bl"];      cov_gc_new     = gc["new"]
+cov_gc_loaded  = gc["schools_loaded"]; cov_gc_total = gc["schools_total"]; cov_gc_rows = gc["endline_rows_loaded"]
+cov_bt_trained = bt["trained"]; cov_bt_new     = bt["new"]
+cov_bt_loaded  = bt["schools_loaded"]; cov_bt_total = bt["schools_total"]; cov_bt_rows = bt["endline_rows_loaded"]
+
+# Expected-survey denominators (project design):
+#   Girls treatment: 40 endline / school (20 baseline+training + 20 training-only)
+#   Girls control  : 20 endline / school
+#   Boys treatment : 20 endline / school (assumed — revise when first roster lands)
+cov_gt_target = cov_gt_loaded * 40
+cov_gc_target = cov_gc_loaded * 20
+cov_bt_target = cov_bt_loaded * 20
+cov_gt_pct    = pct(cov_gt_rows, cov_gt_target)
+cov_gc_pct    = pct(cov_gc_rows, cov_gc_target)
+cov_bt_pct    = pct(cov_bt_rows, cov_bt_target)
+
+# Boys treatment state — show "awaiting rosters" if none loaded yet
+cov_bt_has_rosters = cov_bt_loaded > 0
+
+print(f"  Girls Treatment : {cov_gt_loaded}/{cov_gt_total} schools loaded, "
+      f"{cov_gt_rows} endline rows -> BL+TR={cov_gt_bl_tr}, TR-only={cov_gt_tr_only}, New={cov_gt_new}")
+print(f"  Girls Control   : {cov_gc_loaded}/{cov_gc_total} schools loaded, "
+      f"{cov_gc_rows} endline rows -> BL={cov_gc_bl}, New={cov_gc_new}")
+print(f"  Boys Treatment  : {cov_bt_loaded}/{cov_bt_total} schools loaded, "
+      f"{cov_bt_rows} endline rows -> Trained={cov_bt_trained}, New={cov_bt_new}")
+
+# ══════════════════════════════════════════════════════════════════════════
 # BUILD JAVASCRIPT CHART BLOCK
 # ══════════════════════════════════════════════════════════════════════════
 print("Generating chart data block...")
@@ -828,6 +1047,18 @@ subs = {
     "{boys_father_inter_pct}":  boys_father_inter_pct,  "{girls_father_inter_pct}": girls_father_inter_pct,
     "{boys_father_lowed_pct}":  boys_father_lowed_pct,  "{girls_father_lowed_pct}": girls_father_lowed_pct,
     "{boys_mother_home_pct}":   boys_mother_home_pct,   "{girls_mother_home_pct}":  girls_mother_home_pct,
+    # Sample Coverage tab
+    "{cov_gt_bl_tr}":   cov_gt_bl_tr,   "{cov_gt_tr_only}": cov_gt_tr_only, "{cov_gt_new}":     cov_gt_new,
+    "{cov_gt_loaded}":  cov_gt_loaded,  "{cov_gt_total}":   cov_gt_total,   "{cov_gt_rows}":    cov_gt_rows,
+    "{cov_gt_target}":  cov_gt_target,  "{cov_gt_pct}":     cov_gt_pct,
+    "{cov_gc_bl}":      cov_gc_bl,      "{cov_gc_new}":     cov_gc_new,
+    "{cov_gc_loaded}":  cov_gc_loaded,  "{cov_gc_total}":   cov_gc_total,   "{cov_gc_rows}":    cov_gc_rows,
+    "{cov_gc_target}":  cov_gc_target,  "{cov_gc_pct}":     cov_gc_pct,
+    "{cov_bt_trained}": cov_bt_trained, "{cov_bt_new}":     cov_bt_new,
+    "{cov_bt_loaded}":  cov_bt_loaded,  "{cov_bt_total}":   cov_bt_total,   "{cov_bt_rows}":    cov_bt_rows,
+    "{cov_bt_target}":  cov_bt_target,  "{cov_bt_pct}":     cov_bt_pct,
+    "{cov_bt_status}":  ("Awaiting first boys roster file." if not cov_bt_has_rosters else
+                        f"{cov_bt_loaded} of {cov_bt_total} schools have rosters loaded."),
 }
 for k, v in subs.items():
     output_text = output_text.replace(k, str(v))

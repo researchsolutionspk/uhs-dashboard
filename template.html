@@ -426,6 +426,7 @@
       <button class="nav-tab" onclick="showPanel('wellbeing',this)">💚 Wellbeing</button>
       <button class="nav-tab" onclick="showPanel('boys',this)">👦 Boys' Module</button>
       <button class="nav-tab" onclick="showPanel('girls',this)">👧 Girls' Module</button>
+      <button class="nav-tab" onclick="showPanel('coverage',this)">🎯 Sample Coverage</button>
     </nav>
   </div>
 </div>
@@ -1052,6 +1053,87 @@
     </div>
 
     <p class="footnote">Girls' module data (n={n_girls}). Household time use measured in approximate daily hours. Harassment sharing variables: 0=No, 1=Yes — respondents could select multiple people they would tell. Reporting: 1=Yes would report, 2=No. Behaviour modification: 1=Always, 2=Sometimes, 3=Rarely, 4=Never. RRT (garbling) used for sensitive harassment items to protect respondent anonymity.</p>
+  </div>
+
+  <!-- ══ SAMPLE COVERAGE ══ -->
+  <div class="panel" id="panel-coverage">
+    <div class="section-header">
+      <div class="section-header-accent"></div>
+      <div>
+        <h2>Sample Coverage — Endline Progress vs. Design</h2>
+        <p>Progress of endline data collection against the sample design. Rows are bucketed by matching each endline respondent's registration ID against the school's baseline / training roster (sourced from the <em>Sample Tables</em> docx files). Numbers below reflect only schools whose roster file has been loaded; coverage will expand as more roster files are added.</p>
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card teal"><div class="kpi-icon">👧</div><div class="kpi-value">{cov_gt_rows}<span style="font-size:18px;color:var(--rs-navy-soft);"> / {cov_gt_target}</span></div><div class="kpi-label">Girls Treatment — Endline Surveyed</div><div class="kpi-delta up">{cov_gt_loaded}/{cov_gt_total} schools · {cov_gt_pct}%</div></div>
+      <div class="kpi-card navy"><div class="kpi-icon">👧</div><div class="kpi-value">{cov_gc_rows}<span style="font-size:18px;color:var(--rs-navy-soft);"> / {cov_gc_target}</span></div><div class="kpi-label">Girls Control — Endline Surveyed</div><div class="kpi-delta up">{cov_gc_loaded}/{cov_gc_total} schools · {cov_gc_pct}%</div></div>
+      <div class="kpi-card amber"><div class="kpi-icon">👦</div><div class="kpi-value">{cov_bt_rows}<span style="font-size:18px;color:var(--rs-navy-soft);"> / {cov_bt_target}</span></div><div class="kpi-label">Boys Treatment — Endline Surveyed</div><div class="kpi-delta neutral">{cov_bt_loaded}/{cov_bt_total} schools · {cov_bt_pct}%</div></div>
+      <div class="kpi-card purple"><div class="kpi-icon">📋</div><div class="kpi-value">{cov_gt_loaded}<span style="font-size:18px;color:var(--rs-navy-soft);"> + {cov_gc_loaded} + {cov_bt_loaded}</span></div><div class="kpi-label">Schools with Rosters Loaded</div><div class="kpi-delta neutral">Girls T · Girls C · Boys T</div></div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>👧 Girls Treatment Schools — Coverage Breakdown</h3>
+        <div class="chart-desc">Endline surveys at treatment schools ({cov_gt_loaded} of {cov_gt_total} schools with roster loaded), bucketed by matching each endline girl's registration ID against her school's baseline+training list (Table 1) and training-only list (Table 2).</div>
+        <table class="data-table">
+          <thead><tr><th>Category</th><th style="text-align:right;">Surveyed</th><th>Definition</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-navy">Baseline + Training + Endline</span></td><td style="text-align:right;font-weight:700;">{cov_gt_bl_tr}</td><td>Girl on the 20-per-school baseline+training roster (Table 1) who was surveyed at endline.</td></tr>
+            <tr><td><span class="badge-navy">Training-only + Endline</span></td><td style="text-align:right;font-weight:700;">{cov_gt_tr_only}</td><td>Girl on the training-only roster (Table 2) who was surveyed at endline — trained but not part of baseline.</td></tr>
+            <tr><td><span class="badge-navy">New at Endline</span></td><td style="text-align:right;font-weight:700;">{cov_gt_new}</td><td>Endline girl whose registration ID matched neither Table 1 nor Table 2 — replacement or walk-in.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-card">
+        <h3>👧 Girls Control Schools — Coverage Breakdown</h3>
+        <div class="chart-desc">Endline surveys at control schools ({cov_gc_loaded} of {cov_gc_total} schools with roster loaded). Control schools have baseline but no training; backup/replacement lists absorb any absentees.</div>
+        <table class="data-table">
+          <thead><tr><th>Category</th><th style="text-align:right;">Surveyed</th><th>Definition</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-navy">Baseline + Endline</span></td><td style="text-align:right;font-weight:700;">{cov_gc_bl}</td><td>Girl on the 20-per-school baseline roster (Table 1) who was surveyed again at endline.</td></tr>
+            <tr><td><span class="badge-navy">New at Endline</span></td><td style="text-align:right;font-weight:700;">{cov_gc_new}</td><td>Endline girl not on the baseline roster — backup/replacement from Table 2 or walk-in.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="chart-grid cols-2">
+      <div class="chart-card">
+        <h3>👦 Boys Treatment Schools — Coverage Breakdown</h3>
+        <div class="chart-desc">{cov_bt_status} Boys control schools are excluded by design — no baseline was conducted, so every endline boy there is new.</div>
+        <table class="data-table">
+          <thead><tr><th>Category</th><th style="text-align:right;">Surveyed</th><th>Definition</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge-navy">Trained + Endline</span></td><td style="text-align:right;font-weight:700;">{cov_bt_trained}</td><td>Boy on the training roster (Table 1) who was surveyed at endline.</td></tr>
+            <tr><td><span class="badge-navy">New at Endline</span></td><td style="text-align:right;font-weight:700;">{cov_bt_new}</td><td>Endline boy not on the training roster — replacement/walk-in.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-card">
+        <h3>📈 Targets &amp; Denominators</h3>
+        <div class="chart-desc">Per-school endline targets by design: Girls Treatment 40/school (20 baseline+training + 20 training-only); Girls Control 20/school; Boys Treatment 20/school.</div>
+        <table class="data-table">
+          <thead><tr><th>Arm</th><th style="text-align:right;">Schools loaded</th><th style="text-align:right;">Target</th><th style="text-align:right;">Surveyed</th><th style="text-align:right;">% Complete</th></tr></thead>
+          <tbody>
+            <tr><td>Girls Treatment</td><td style="text-align:right;">{cov_gt_loaded} / {cov_gt_total}</td><td style="text-align:right;">{cov_gt_target}</td><td style="text-align:right;font-weight:700;">{cov_gt_rows}</td><td style="text-align:right;">{cov_gt_pct}%</td></tr>
+            <tr><td>Girls Control</td><td style="text-align:right;">{cov_gc_loaded} / {cov_gc_total}</td><td style="text-align:right;">{cov_gc_target}</td><td style="text-align:right;font-weight:700;">{cov_gc_rows}</td><td style="text-align:right;">{cov_gc_pct}%</td></tr>
+            <tr><td>Boys Treatment</td><td style="text-align:right;">{cov_bt_loaded} / {cov_bt_total}</td><td style="text-align:right;">{cov_bt_target}</td><td style="text-align:right;font-weight:700;">{cov_bt_rows}</td><td style="text-align:right;">{cov_bt_pct}%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="insight-row">
+      <div class="insight-box navy">
+        <strong>Methodology:</strong> Each endline girl's <code>b_reg_id</code> and <code>new_reg_id</code> are checked against Table 1 / Table 2 IDs extracted from her school's <em>Sample Tables</em> docx file. Enumerator misclassifications (e.g., a baseline girl logged as "new" on the device) are auto-corrected by this roster match — the docx is treated as the source of truth.
+      </div>
+      <div class="insight-box teal">
+        <strong>Coverage expands automatically:</strong> Drop new <code>.docx</code> files into <code>Sample/Sample Tables/</code> and re-run <code>python generate.py</code>. Schools without a roster file contribute to totals but not to the buckets above — their endline rows become countable as soon as a roster is added.
+      </div>
+    </div>
+
+    <p class="footnote">Sample design: Girls Treatment schools = 20 baseline+training + 20 training-only girls per school (total 40); Girls Control schools = 20 baseline girls per school; Boys Treatment schools = trained boys only (no baseline). Boys Control schools have no baseline or training and therefore no coverage breakdown. ID matching uses normalised strings against both <code>b_reg_id</code> (baseline-flow) and <code>new_reg_id</code> (new-flow) columns in the endline CSV.</p>
   </div>
 
 </div><!-- /main -->
